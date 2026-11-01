@@ -1,0 +1,81 @@
+{
+  "phishing": {
+    "feature_names": [
+      "url_length",
+      "hostname_length",
+      "path_length",
+      "dot_count",
+      "hyphen_count",
+      "digit_ratio",
+      "special_char_count",
+      "has_https",
+      "has_ip_host",
+      "subdomain_count",
+      "suspicious_keyword_count"
+    ],
+    "task_type": "classification",
+    "labels": {
+      "0": "Legitimate",
+      "1": "Phishing"
+    },
+    "metrics": {
+      "accuracy": 0.883,
+      "precision": 0.894,
+      "recall": 0.866,
+      "f1": 0.88
+    },
+    "description": "Random Forest on synthetic lexical URL features"
+  },
+  "prompt": {
+    "task_type": "classification",
+    "labels": {
+      "0": "Allow",
+      "1": "Block"
+    },
+    "metrics": {
+      "accuracy": 0.883,
+      "precision": 0.884,
+      "recall": 0.879,
+      "f1": 0.881
+    },
+    "description": "TF-IDF + Logistic Regression on synthetic prompt text"
+  },
+  "ai-content": {
+    "feature_names": [
+      "avg_word_length",
+      "avg_sentence_length",
+      "lexical_diversity",
+      "punctuation_ratio",
+      "repeated_word_ratio",
+      "sentence_length_std"
+    ],
+    "task_type": "classification",
+    "labels": {
+      "0": "Human-made",
+      "1": "AI-generated"
+    },
+    "metrics": {
+      "accuracy": 0.819,
+      "precision": 0.847,
+      "recall": 0.785,
+      "f1": 0.815
+    },
+    "description": "Logistic Regression on synthetic stylometric text features"
+  },
+  "log": {
+    "feature_names": [
+      "failed_logins",
+      "error_count",
+      "warning_count",
+      "unique_ip_count",
+      "requests_per_minute"
+    ],
+    "task_type": "clustering",
+    "anomalous_cluster": 1,
+    "distance_p95": 2.9985565720472516,
+    "metrics": {
+      "silhouette_score": 0.554
+    },
+    "description": "K-Means clustering on synthetic log-session features"
+  }
+}
