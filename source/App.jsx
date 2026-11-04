@@ -1,5 +1,5 @@
-import {useState} from 'react'
 import {checkUrl} from './api.js'
+import { useEffect,useState } from 'react'
 
 export default function App() {
   const [url, setUrl] = useState('')
@@ -7,6 +7,15 @@ export default function App() {
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [status, setStatus] = useState("Loading")
+
+  useEffect(() => {
+    fetch("/api/health")
+    .then(response => response.json())
+    .then(data => setStatus(data.status))
+    .catch(() => setStatus('offline'))
+  }, []);
+
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -113,6 +122,10 @@ export default function App() {
         <div id="footerContent">
         <p>&copy; 2026 DetectivePhisher</p>
         </div>
+
+        <output class={`status-box ${status}`} title='The connection to the server'>
+          <p>{status}</p>
+        </output>
       </footer>
     </>
   )
