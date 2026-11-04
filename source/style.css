@@ -1,0 +1,40 @@
+/*
+    How to write / read this file
+
+
+
+    All css will be broken up into sections, and then sub sections if needed.
+    An example of this will be a div and a button, the button us within the div, so we subsection it
+    to subsection, use indentation
+    e.g.
+    ```
+    div {
+        div-styles: style;
+        div-styles: style;
+        div-styles: style;
+    }
+        button {
+            button-styles: style;
+            button-styles: style;
+            button-styles: style;
+        }
+
+    This creates a system for us to use and easily identify where things belong
+
+
+
+    On-top you are to NOT use values (magic numbers). Instead make a variable IF NOT ALREADY THERE!
+*/
+
+
+
+
+root {
+    --example-variable: none;
+
+}
+
+
+body {
+    margin: none;
+}
