@@ -62,6 +62,12 @@ export default function App() {
           {error && <p className="error-message">{error}</p>}
         </section>
 
+
+
+
+
+
+      {/* Going to be moved to main.py soon. */}
         <section>
           <div id="report">
             {result ? (

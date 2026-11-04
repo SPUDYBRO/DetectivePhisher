@@ -29,12 +29,98 @@
 
 
 
-root {
+:root {
     --example-variable: none;
 
+    /* Font Size Variable Section */
+    --h1-font-size: 2rem;
+    --h2-font-size: 1.5rem;
+    --h3-font-size: 1.17rem;
+    --h4-font-size: 1rem;
+    --h5-font-size: 0.83rem;
+    --h6-font-size: 0.67rem;
+    --p-font-size: 1rem;
+    
+    /* Text Color Variable Section */
+    --standardised-text-color: #000000;
+    
+    /* Header Variable Section */
+    --header-background-color: #464444;
+    --header-text-color: #fdfafa;
+    --header-height: 10vh;
+    --header-margin: 0;
+    
+    /* Logo Variable Section */
+    --logo-padding: 1rem;
+    
+    /* Extra Variable Section */
+    --extra-padding: 1rem;
 }
 
 
 body {
-    margin: 0px;
+    margin: 0;
 }
+
+/* Font Size Section */
+h1 {
+    font-size: var(--h1-font-size);
+    color: var(--standardised-text-color);
+}
+
+h2 {
+    font-size: var(--h2-font-size);
+    color: var(--standardised-text-color);
+}
+
+h3 {
+    font-size: var(--h3-font-size);
+    color: var(--standardised-text-color);
+}
+
+h4 {
+    font-size: var(--h4-font-size);
+    color: var(--standardised-text-color);
+}
+
+h5 {
+    font-size: var(--h5-font-size);
+    color: var(--standardised-text-color);
+}
+
+h6 {
+    font-size: var(--h6-font-size);
+    color: var(--standardised-text-color);
+}
+
+p {
+    font-size: var(--p-font-size);
+    color: var(--standardised-text-color);
+}
+
+/* Header Section */
+header {
+    background-color: var(--header-background-color);
+    margin: var(--header-margin);
+    height: var(--header-height);
+
+    justify-content: space-between;
+    display: flex;
+}
+
+    #logo, h1{
+        color: var(--header-text-color);
+        margin: var(--header-margin);
+    }
+
+    /* Logo Section */
+    #logo {
+        padding-top: var(--logo-padding);
+    }
+
+    /* Extra Section */
+    #extra {
+        padding-top: var(--extra-padding);
+    }       
+
+
