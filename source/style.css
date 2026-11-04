@@ -31,7 +31,7 @@
 
 :root {
     --example-variable: none;
-
+    
     /* Font Size Variable Section */
     --h1-font-size: 2rem;
     --h2-font-size: 1.5rem;
@@ -51,10 +51,13 @@
     --header-margin: 0;
     
     /* Logo Variable Section */
-    --logo-padding: 1rem;
+    --logo-padding: 0.5rem;
     
     /* Extra Variable Section */
-    --extra-padding: 1rem;
+    --extra-padding: 0.5rem;
+    
+    /* Header Link Variable Section */
+    --header-link-margin: 0.5rem;
 }
 
 
@@ -113,14 +116,25 @@ header {
         margin: var(--header-margin);
     }
 
-    /* Logo Section */
     #logo {
-        padding-top: var(--logo-padding);
+        display: flex;
+        align-items: flex-end;
+        padding-bottom: var(--logo-padding);
+        padding-left: var(--logo-padding);
     }
 
     /* Extra Section */
     #extra {
-        padding-top: var(--extra-padding);
+        display: flex;
+        align-items: flex-end;
+        padding-bottom: var(--extra-padding);
+        padding-right: var(--extra-padding);
     }       
+
+        #extra, a {
+            color: var(--header-text-color);
+            text-decoration: none;
+            margin: var(--header-link-margin);
+        }
 
 
