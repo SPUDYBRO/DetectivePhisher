@@ -110,7 +110,9 @@ export default function App() {
       </main>
 
       <footer>
+        <div id="footerContent">
         <p>&copy; 2026 DetectivePhisher</p>
+        </div>
       </footer>
     </>
   )

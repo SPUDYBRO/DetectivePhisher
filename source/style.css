@@ -51,19 +51,41 @@
     --header-margin: 0;
     
     /* Logo Variable Section */
-    --logo-padding: 0.5rem;
+    --logo-bottom-padding: 0.5rem;
+    --logo-left-padding: 1rem;
     
     /* Extra Variable Section */
-    --extra-padding: 0.5rem;
+    --extra-bottom-padding: 0.2rem;
+    --extra-right-padding: 1.5rem;
     
     /* Header Link Variable Section */
     --header-link-margin: 0.5rem;
+
+    /* Footer Variable Section */
+    --footer-background-color: #464444;
+    --footer-text-color: #fdfafa;
+
+    --footer-height: 8vh;
+    --footer-bottom-padding: 0.5rem;
+    --footer-left-padding: 0.6rem;
+    --footer-p-margin: 0;
 }
 
-
+/* Layout Section */
 body {
     margin: 0;
+    height: 100%;
 }
+
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+    main {
+        flex: 1;
+    }
 
 /* Font Size Section */
 h1 {
@@ -119,22 +141,40 @@ header {
     #logo {
         display: flex;
         align-items: flex-end;
-        padding-bottom: var(--logo-padding);
-        padding-left: var(--logo-padding);
+        padding-bottom: var(--logo-bottom-padding);
+        padding-left: var(--logo-left-padding);
     }
 
     /* Extra Section */
     #extra {
         display: flex;
         align-items: flex-end;
-        padding-bottom: var(--extra-padding);
-        padding-right: var(--extra-padding);
+        padding-bottom: var(--extra-bottom-padding);
+        padding-right: var(--extra-right-padding);
     }       
 
         #extra, a {
-            color: var(--header-text-color);
             text-decoration: none;
+            color: var(--header-text-color);
             margin: var(--header-link-margin);
         }
 
+
+footer {
+    background-color: var(--footer-background-color);
+    color: var(--footer-text-color);
+    height: var(--footer-height);
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+
+    #footerContent {
+        padding-left: var(--footer-left-padding);
+        padding-bottom: var(--footer-bottom-padding);
+        }
+    p {
+        margin: var(--footer-p-margin);
+    }
+}
 
