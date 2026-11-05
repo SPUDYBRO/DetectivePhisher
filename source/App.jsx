@@ -63,7 +63,7 @@ export default function App() {
               onChange={event => setUrl(event.target.value)}
               required
             />
-            <br />
+            <br/>
             <button type="submit" disabled={loading}>
               {loading ? 'Checking…' : 'Check URL'}
             </button>
@@ -77,7 +77,7 @@ export default function App() {
 
 
       {/* Going to be moved to main.py soon. */}
-        <section>
+        <section id="results">
           <div id="report">
             {result ? (
               <>
