@@ -116,8 +116,8 @@
     --url-form-input-padding: 0.75rem 1rem;
 
     /* URL Form Input Focus Variable Section */
-    --url-form-input-focus-outline: 2px solid #333;
-    --url-form-input-focus-border: 2px solid #333;
+    --url-form-input-focus-outline: 0.15rem solid #333;
+    --url-form-input-focus-border: 0.15rem solid #333;
 
     /* URL Form Button Variable Section */
     --url-form-button-width: 100%;
@@ -125,6 +125,7 @@
     --url-form-button-font-size: 1rem;
     --url-form-button-max-width: 250px;
     --url-form-button-padding: 0.75rem 2rem;
+    --url-form-button-border-radius: 0.2rem;
     --url-form-button-background-color: #333;
     --url-form-button-transition: background-color 0.3s ease;
     --url-form-button-hover-background-color: #1a1a1a;
@@ -304,15 +305,19 @@ header {
 footer {
     display: flex;
     position: relative;
-    align-items: flex-end;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: space-between;
 
     height: var(--footer-height);
     background-color: var(--footer-background-color);
+    padding: 0 1.5rem;
+    gap: 1rem;
     
     #footerContent {
         padding-left: var(--footer-left-padding);
-        padding-bottom: var(--footer-bottom-padding);
+        padding-bottom: 0;
+        display: flex;
+        align-items: center;
     }
     
     p {
@@ -372,13 +377,12 @@ footer {
             border: var(--url-form-input-border);
             width: var(--url-form-input-width);
             font-size: var(--url-form-input-font-size);
-            border-radius: var(--url-form-input-border-radius);
             padding: var(--url-form-input-padding);
         }
 
         #urlForm input:focus {
-            outline: var(--url-form-input-focus-outline);
             border: var(--url-form-input-focus-border);
+            outline: var(--url-form-input-focus-outline);
         }
 
         #urlForm button {
@@ -387,11 +391,12 @@ footer {
 
             width: var(--url-form-button-width);
             color: var(--url-form-button-color);
+            padding: var(--url-form-button-padding);
             font-size: var(--url-form-button-font-size);
             max-width: var(--url-form-button-max-width);
-            padding: var(--url-form-button-padding);
-            background-color: var(--url-form-button-background-color);
             transition: var(--url-form-button-transition);
+            border-radius: var(--url-form-button-border-radius);
+            background-color: var(--url-form-button-background-color);
         }
 
         #urlForm button:hover:not(:disabled) {
@@ -447,9 +452,9 @@ footer {
             list-style: none;
             flex-direction: column;
             
-            padding: var(--results-report-ul-padding);
-            margin: var(--results-report-ul-margin);
             gap: var(--results-report-ul-gap);
+            margin: var(--results-report-ul-margin);
+            padding: var(--results-report-ul-padding);
         }
 
         #report li {
@@ -575,50 +580,130 @@ footer {
 
 
 
-/* Fucking shit box below */
-.status-box { /* still in the making, no variables yet */
-    position: absolute;
-    right: 1rem;
-
-    box-sizing: border-box;
-
+/* Status box down below */
+.status-box {
+    position: static;
+    
+    height: 45px;
+    width: auto;
+    padding: 0 1.25rem;
+    
     display: flex;
     align-items: center;
     justify-content: center;
-    align-self: center;
-
-    width: 4rem;
-    max-width: 6rem;
-
-    font-weight: 500;
-    font-size: 1rem;
-    line-height: 1.5rem;
-
-
-    /* defaults to the loading style*/
-    border: 1px solid #facc15;
-    border-radius: 0.5rem;
-    background: #fefce8a2;
-    color: #ca8a04;
-
-    transition: all 0.5s ease;
-    cursor: default;
+    gap: 0.75rem;
+    
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.2rem;
+    
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    
+    color: white;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    
+    box-shadow: none;
+    transition: all 0.3s ease;
+    z-index: 10;
+    
+    animation: none;
 }
-    .status-box.online {
-        border: 1px solid #84d65a;
-        border-radius: 0.5rem;
-        background: #edfbd891;
-        color: #2b641e;
+
+    .status-box p {
+        margin: 0;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
+
+    .status-box::before {
+        content: "";
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-radius: 0.2rem;
+        background: #facc15;
+        box-shadow: 0 0 8px rgba(250, 204, 21, 0.6);
+        animation: pulse 1.5s ease-in-out infinite;
+        flex-shrink: 0;
+    }
+
+    /* Loading state - Yellow indicator with animation */
     .status-box.loading {
-        border: 1px solid #facc15;
-        border-radius: 0.5rem;
-        background: #fefce8a2;
-        color: #ca8a04;
+        background: rgba(250, 204, 21, 0.15);
+        border-color: rgba(250, 204, 21, 0.3);
+        backdrop-filter: blur(10px);
     }
+
+    .status-box.loading::before {
+        background: #facc15;
+        box-shadow: 0 0 8px rgba(250, 204, 21, 0.8);
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .status-box.loading p {
+        color: #fbbf24;
+    }
+
+    /* Online state - Green indicator */
+    .status-box.online {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: rgba(34, 197, 94, 0.3);
+        backdrop-filter: blur(10px);
+    }
+
+    .status-box.online::before {
+        background: #22c55e;
+        border-radius: 0.2rem;
+        box-shadow: 0 0 12px rgba(34, 197, 94, 0.8);
+        animation: none;
+    }
+
+    .status-box.online p {
+        color: #86efac;
+    }
+
+    /* Offline state - Red indicator */
     .status-box.offline {
-        border: 1px solid #f87171;
-        border-radius: 0.5rem;
-        background: #ffc9c9a4;
-        color: #991b1b;
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.3);
+        backdrop-filter: blur(10px);
+    }
+
+    .status-box.offline::before {
+        background: #ef4444;
+        border-radius: 0.2rem;
+        box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+        animation: none;
+    }
+
+    .status-box.offline p {
+        color: #fca5a5;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(100px) translateY(100px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0) translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.7;
+            transform: scale(1.2);
+        }
     }

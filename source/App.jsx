@@ -63,7 +63,6 @@ export default function App() {
               onChange={event => setUrl(event.target.value)}
               required
             />
-            <br/>
             <button type="submit" disabled={loading}>
               {loading ? 'Checking…' : 'Check URL'}
             </button>
