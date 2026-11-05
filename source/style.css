@@ -49,6 +49,13 @@
     --custom-h2-margin: 0 0 0.5rem 0;
     --custom-h2-max-width: 600px;
 
+    /* Custom h3 Variable Section */
+    --custom-h3-font-size: 1.5rem;
+    --custom-h3-color: #000;
+    --custom-h3-margin: 0 0 1.5rem 0;
+    --custom-h3-width: 100%;
+
+
 
     
     /* Text Color Variable Section */
@@ -65,14 +72,10 @@
     /* Header Link Variable Section */
     --header-link-margin: 0.5rem;
 
-
-    
     /* Logo Variable Section */
     --logo-bottom-padding: 0.5rem;
     --logo-left-padding: 1rem;
 
-
-    
     /* Extra Variable Section */
     --extra-bottom-padding: 0.2rem;
     --extra-right-padding: 1.5rem;
@@ -132,7 +135,81 @@
     /* URL Input Error Message Section */
     --url-input-error-message-color: #d9534f;
     --url-input-error-message-margin-top: 1rem;
-    
+
+
+
+    /* Results Variable Section */
+    --results-width: 100%;
+    --results-padding: 3rem 2rem;
+    --results-grid-template-columns: 1fr 1fr 1fr;
+    --results-gap: 3rem;
+    --results-background-color: #f5f5f5;
+
+    /* ###################### */
+    /* Results Report Section */
+    /* ###################### */
+
+    /* Results Report UL Section */
+    --results-report-ul-padding: 0;
+    --results-report-ul-margin: 0;
+    --results-report-ul-gap: 0.75rem;
+
+    /* Results Report LI Section */
+    --results-report-li-color: #333;
+    --results-report-li-font-size: 0.95rem;
+    --results-report-li-line-height: 1.5;
+    --results-report-li-padding-left: 1.2rem;
+
+    /* Results Report LI Before Section */
+    --results-report-li-before-position: absolute;
+    --results-report-li-before-content: "•";
+    --results-report-li-before-left: 0;
+    --results-report-li-before-color: #000;
+    --results-report-li-before-font-weight: bold;
+
+    /* ############################ */
+    /* Results Trust Factor Section */
+    /* ############################ */
+
+    /* Results Trust Factor Chart Section */
+    --results-trust-factor-chart-width: 200px;
+    --results-trust-factor-chart-height: 200px;
+    --results-trust-factor-chart-margin: 1rem;
+
+    /* Results Trust Factor Chart SVG Section */
+    --results-trust-factor-chart-svg-width: 100%;
+    --results-trust-factor-chart-svg-height: 100%;
+    --results-trust-factor-chart-svg-transform: rotate(-90deg);
+
+    /* Results Trust Factor Chart Label Section */
+    --results-trust-factor-chart-label-top: 50%;
+    --results-trust-factor-chart-label-left: 50%;
+    --results-trust-factor-chart-label-transform: translate(-50%, -50%);
+    --results-trust-factor-chart-label-font-size: 2rem;
+    --results-trust-factor-chart-label-color: #fff;
+    --results-trust-factor-chart-label-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    /* Results Trust Factor Chart Verdict Label Section */
+    --results-trust-factor-chart-verdict-label-font-size: 1.2rem;
+    --results-trust-factor-chart-verdict-label-color: #000;
+    --results-trust-factor-chart-verdict-label-margin: 0;
+
+    /* ####################### */
+    /* Results History Section */
+    /* ####################### */
+
+    /* Results History List Section */
+    --results-history-list-gap: 1rem;
+
+    /* Results History Item Section */
+    --results-history-item-padding: 1rem;
+    --results-history-item-background-color: #e0e0e0;
+    --results-history-item-border-radius: 50px;
+    --results-history-item-color: #333;
+    --results-history-item-font-size: 0.95rem;
+    --results-history-item-min-height: 60px;
+
+
 }
 
 /* Layout Section */
@@ -225,20 +302,22 @@ header {
     
 /* Footer Section */
 footer {
-    background-color: var(--footer-background-color);
-    color: var(--footer-text-color);
-    height: var(--footer-height);
-
     display: flex;
-    justify-content: flex-start;
-    align-items: flex-end;
     position: relative;
+    align-items: flex-end;
+    justify-content: flex-start;
+
+    height: var(--footer-height);
+    background-color: var(--footer-background-color);
+    
     #footerContent {
         padding-left: var(--footer-left-padding);
         padding-bottom: var(--footer-bottom-padding);
-        }
+    }
+    
     p {
         margin: var(--footer-p-margin);
+        color: var(--footer-text-color);
     }
 }
 
@@ -333,13 +412,158 @@ footer {
         
 /* Results Section */
 #results {
-    width: 100%;
-    padding: 0.5rem;
+    display: grid;
+    text-align: left;
     box-sizing: border-box;
-    justify-content: space-evenly;
-    display: flex;
-    flex-direction: row; 
-    text-align: center;
+    align-items: flex-start;
+    
+    gap: var(--results-gap);
+    width: var(--results-width);
+    padding: var(--results-padding);
+    background-color: var(--results-background-color);
+    grid-template-columns: var(--results-grid-template-columns);
+    
+    #report {
+        display: flex;
+        flex-direction: column;
+    }
+    
+        #report h3 {
+            font-weight: bold;
+            text-align: center;
+
+            color: var(--custom-h3-color);
+            width: var(--custom-h3-width);
+            margin: var(--custom-h3-margin);
+            font-size: var(--custom-h3-font-size);
+        }
+
+        #report p{
+            text-align: center;
+        }
+    
+        #report ul {
+            display: flex;
+            list-style: none;
+            flex-direction: column;
+            
+            padding: var(--results-report-ul-padding);
+            margin: var(--results-report-ul-margin);
+            gap: var(--results-report-ul-gap);
+        }
+
+        #report li {
+            position: relative;
+            
+            color: var(--results-report-li-color);
+            font-size: var(--results-report-li-font-size);
+            line-height: var(--results-report-li-line-height);
+            padding-left: var(--results-report-li-padding-left);
+        }
+
+        #report li:before {
+            position: absolute;
+            
+            left: var(--results-report-li-before-left);
+            color: var(--results-report-li-before-color);
+            content: var(--results-report-li-before-content);
+            font-weight: var(--results-report-li-before-font-weight);
+        }
+
+    #trustFactor {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+        #trustFactor h3 {
+            font-weight: bold;
+            text-align: center;
+
+            width: var(--custom-h3-width);
+            color: var(--custom-h3-color);
+            margin: var(--custom-h3-margin);
+            font-size: var(--custom-h3-font-size);
+        }
+
+        #trustFactor p{
+            text-align: center;
+        }
+
+    .donut-chart {
+            position: relative;
+            
+            width: var(--results-trust-factor-chart-width);
+            height: var(--results-trust-factor-chart-height);
+            margin-bottom: var(--results-trust-factor-chart-margin);
+        }
+        
+        .chart-svg {
+                width: var(--results-trust-factor-chart-svg-width);
+                height: var(--results-trust-factor-chart-svg-height);
+                transform: var(--results-trust-factor-chart-svg-transform);
+        }
+            
+            .chart-label {
+                font-weight: bold;
+                position: absolute;
+                
+                top: var(--results-trust-factor-chart-label-top);
+                left: var(--results-trust-factor-chart-label-left);
+                color: var(--results-trust-factor-chart-label-color);
+                transform: var(--results-trust-factor-chart-label-transform);
+                font-size: var(--results-trust-factor-chart-label-font-size);
+                text-shadow: var(--results-trust-factor-chart-label-text-shadow);
+            }
+            
+        .verdict-label {
+            font-weight: bold;
+            text-align: center;
+            
+            color: var(--results-trust-factor-chart-verdict-label-color);
+            margin: var(--results-trust-factor-chart-verdict-label-margin);
+            font-size: var(--results-trust-factor-chart-verdict-label-font-size);
+        }
+        
+    #safetyHistory {
+        display: flex;
+        flex-direction: column;
+    }
+    
+        #safetyHistory h3 {
+            font-weight: bold;
+            text-align: center;
+            
+            color: var(--custom-h3-color);
+            margin: var(--custom-h3-margin);
+            font-size: var(--custom-h3-font-size);
+        }
+
+        #safetyHistory p{
+            text-align: center;
+        }
+        
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            
+            gap: var(--results-history-list-gap);
+        }
+        
+        .history-item {
+            display: flex;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            
+            color: var(--results-history-item-color);
+            padding: var(--results-history-item-padding);
+            font-size: var(--results-history-item-font-size);
+            min-height: var(--results-history-item-min-height);
+            border-radius: var(--results-history-item-border-radius);
+            background-color: var(--results-history-item-background-color);
+        }
 }
 
 

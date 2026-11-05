@@ -79,22 +79,34 @@ export default function App() {
       {/* Going to be moved to main.py soon. */}
         <section id="results">
           <div id="report">
+            <h3>Report</h3>
             {result ? (
-              <>
-                <h3>Report</h3>
-                <p><strong>Verdict:</strong> {result.verdict}</p>
-                <p>{result.explanation}</p>
-              </>
+              <ul>
+                <li>Domain registered 11 days ago - Unusually new</li>
+                <li>More info on unusual activity if any is present</li>
+                <li>More info on unusual activity if any is present</li>
+                <li>More info on unusual activity if any is present</li>
+                <li>More info on unusual activity if any is present</li>
+                <li>More info on unusual activity if any is present</li>
+                <li>More info on unusual activity if any is present</li>
+              </ul>
             ) : (
               <p>Submit a URL above to see the phishing report.</p>
             )}
           </div>
 
           <div id="trustFactor">
+            <h3>Trust Factor</h3>
             {result ? (
               <>
-                <h3>Trust factor</h3>
-                <p>{Math.round((result.trustScore ?? 0) * 100)}% trusted</p>
+                <div className="donut-chart">
+                  <svg viewBox="0 0 100 100" className="chart-svg">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#8B6F47" strokeWidth="20" strokeDasharray="102.3 157.08"/>
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#5a6b77" strokeWidth="20" strokeDasharray="54.78 157.08" strokeDashoffset="-102.3"/>
+                  </svg>
+                  <div className="chart-label">{Math.round((result.trustScore ?? 0) * 100)}%</div>
+                </div>
+                <p className="verdict-label">Caution</p>
               </>
             ) : (
               <p>Trust score will appear here after a check.</p>
@@ -102,17 +114,17 @@ export default function App() {
           </div>
 
           <div id="safetyHistory">
-            <h3>Safety history</h3>
+            <h3>History</h3>
             {history.length === 0 ? (
               <p>No URLs checked yet this session.</p>
             ) : (
-              <ul>
+              <div className="history-list">
                 {history.map((entry, index) => (
-                  <li key={index}>
-                    <strong>{entry.url}</strong> — {entry.verdict} ({entry.checkedAt})
-                  </li>
+                  <div key={index} className="history-item">
+                    <span>Past URL entry</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
         </section>
