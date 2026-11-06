@@ -7,6 +7,8 @@ const VERDICT_LABELS = {
   malicious: 'Likely Phishing',
 }
 
+const MAX_HISTORY_ENTRIES = 5
+
 // Radius is kept small enough (r + strokeWidth / 2 <= 50) that the ring stays inside the 100x100 viewBox.
 const DONUT_RADIUS = 35
 const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS
@@ -44,7 +46,7 @@ export default function App() {
       setHistory(prev => [
         {url, verdict: data.verdict, trustScore: data.trustScore, checkedAt: new Date().toLocaleString()},
         ...prev,
-      ])
+      ].slice(0, MAX_HISTORY_ENTRIES))
     } catch (err) {
       setError(err.message)
     } finally {

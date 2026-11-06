@@ -187,12 +187,12 @@
     --results-trust-factor-chart-label-left: 50%;
     --results-trust-factor-chart-label-transform: translate(-50%, -50%);
     --results-trust-factor-chart-label-font-size: 2rem;
-    --results-trust-factor-chart-label-color: #fff;
+    --results-trust-factor-chart-label-color: #222121;
     --results-trust-factor-chart-label-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     
     /* Results Trust Factor Chart Verdict Label Section */
     --results-trust-factor-chart-verdict-label-font-size: 1.2rem;
-    --results-trust-factor-chart-verdict-label-color: #000;
+    --results-trust-factor-chart-verdict-label-color: #222121;
     --results-trust-factor-chart-verdict-label-margin: 0;
     
     /* ####################### */
