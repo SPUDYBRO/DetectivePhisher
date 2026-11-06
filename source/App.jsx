@@ -1,6 +1,12 @@
 import {checkUrl} from './api.js'
 import { useEffect,useState } from 'react'
 
+const VERDICT_LABELS = {
+  benign: 'Looks Safe',
+  caution: 'Use Caution',
+  malicious: 'Likely Phishing',
+}
+
 export default function App() {
   const [url, setUrl] = useState('')
   const [result, setResult] = useState(null)
@@ -75,19 +81,14 @@ export default function App() {
 
 
 
-      {/* Going to be moved to main.py soon. */}
         <section id="results">
           <div id="report">
             <h3>Report</h3>
             {result ? (
               <ul>
-                <li>Domain registered 11 days ago - Unusually new</li>
-                <li>More info on unusual activity if any is present</li>
-                <li>More info on unusual activity if any is present</li>
-                <li>More info on unusual activity if any is present</li>
-                <li>More info on unusual activity if any is present</li>
-                <li>More info on unusual activity if any is present</li>
-                <li>More info on unusual activity if any is present</li>
+                {result.report.map((reason, index) => (
+                  <li key={index}>{reason}</li>
+                ))}
               </ul>
             ) : (
               <p>Submit a URL above to see the phishing report.</p>
@@ -105,7 +106,9 @@ export default function App() {
                   </svg>
                   <div className="chart-label">{Math.round((result.trustScore ?? 0) * 100)}%</div>
                 </div>
-                <p className="verdict-label">Caution</p>
+                <p className={`verdict-label verdict-${result.verdict}`}>
+                  {VERDICT_LABELS[result.verdict] ?? result.verdict}
+                </p>
               </>
             ) : (
               <p>Trust score will appear here after a check.</p>

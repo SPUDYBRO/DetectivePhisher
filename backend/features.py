@@ -162,3 +162,27 @@ def get_url_features(url: str) -> dict | None:
     }
  
     return features
+
+
+def vectorize_features(features: dict) -> list[float]:
+    """Turns a get_url_features() dict into an ordered numeric vector a model can use.
+
+    Booleans become 0/1, and the unknown has_https case (NaN) becomes 0.5 so it sits
+    halfway between "http" (0) and "https" (1) instead of breaking the model.
+
+    Args:
+        features (dict): Output of get_url_features()
+
+    Returns:
+        list[float]: The feature values in the same order as FEATURE_COLUMNS
+    """
+    vector = []
+    for column in FEATURE_COLUMNS:
+        value = features[column]
+        if isinstance(value, bool):
+            vector.append(float(value))
+        elif value != value:   # NaN is the only value that isn't equal to itself
+            vector.append(0.5)
+        else:
+            vector.append(float(value))
+    return vector
