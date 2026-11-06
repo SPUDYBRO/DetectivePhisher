@@ -209,8 +209,6 @@
     --results-history-item-color: #333;
     --results-history-item-font-size: 0.95rem;
     --results-history-item-min-height: 60px;
-
-
 }
 
 /* Layout Section */
@@ -308,16 +306,17 @@ footer {
     align-items: center;
     justify-content: space-between;
 
+    gap: 1rem;
+    padding: 0 1.5rem;
     height: var(--footer-height);
     background-color: var(--footer-background-color);
-    padding: 0 1.5rem;
-    gap: 1rem;
     
     #footerContent {
-        padding-left: var(--footer-left-padding);
-        padding-bottom: 0;
         display: flex;
         align-items: center;
+        
+        padding-bottom: 0;
+        padding-left: var(--footer-left-padding);
     }
     
     p {
@@ -341,12 +340,12 @@ footer {
     background-color: var(--url-input-background-color);
 
     #URLInput > h2{
-        font-size: var(--custom-h2-font-size);
-        font-style: var(--custom-h2-font-style);
-        font-family: var(--custom-h2-font-family);
         color: var(--custom-h2-color);
         margin: var(--custom-h2-margin);
         max-width: var(--custom-h2-max-width);
+        font-size: var(--custom-h2-font-size);
+        font-style: var(--custom-h2-font-style);
+        font-family: var(--custom-h2-font-family);
     }
 
     #URLInput > p {
@@ -374,10 +373,10 @@ footer {
         #urlForm input {
             box-sizing: border-box;
 
-            border: var(--url-form-input-border);
             width: var(--url-form-input-width);
-            font-size: var(--url-form-input-font-size);
+            border: var(--url-form-input-border);
             padding: var(--url-form-input-padding);
+            font-size: var(--url-form-input-font-size);
         }
 
         #urlForm input:focus {
@@ -497,17 +496,17 @@ footer {
         }
 
     .donut-chart {
-            position: relative;
+        position: relative;
             
-            width: var(--results-trust-factor-chart-width);
-            height: var(--results-trust-factor-chart-height);
-            margin-bottom: var(--results-trust-factor-chart-margin);
-        }
+        width: var(--results-trust-factor-chart-width);
+        height: var(--results-trust-factor-chart-height);
+        margin-bottom: var(--results-trust-factor-chart-margin);
+    }
         
         .chart-svg {
-                width: var(--results-trust-factor-chart-svg-width);
-                height: var(--results-trust-factor-chart-svg-height);
-                transform: var(--results-trust-factor-chart-svg-transform);
+            width: var(--results-trust-factor-chart-svg-width);
+            height: var(--results-trust-factor-chart-svg-height);
+            transform: var(--results-trust-factor-chart-svg-transform);
         }
             
             .chart-label {
@@ -579,7 +578,7 @@ footer {
 
 
 
-
+/* Absolute shit box */
 /* Status box down below */
 .status-box {
     position: static;
