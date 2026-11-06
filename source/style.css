@@ -145,16 +145,16 @@
     --results-grid-template-columns: 1fr 1fr 1fr;
     --results-gap: 3rem;
     --results-background-color: #f5f5f5;
-
+    
     /* ###################### */
     /* Results Report Section */
     /* ###################### */
-
+    
     /* Results Report UL Section */
     --results-report-ul-padding: 0;
     --results-report-ul-margin: 0;
     --results-report-ul-gap: 0.75rem;
-
+    
     /* Results Report LI Section */
     --results-report-li-color: #333;
     --results-report-li-font-size: 0.95rem;
@@ -173,10 +173,10 @@
     /* ############################ */
 
     /* Results Trust Factor Chart Section */
-    --results-trust-factor-chart-width: 200px;
-    --results-trust-factor-chart-height: 200px;
+    --results-trust-factor-chart-width: 80%;
+    --results-trust-factor-chart-height: 80%;
     --results-trust-factor-chart-margin: 1rem;
-
+    
     /* Results Trust Factor Chart SVG Section */
     --results-trust-factor-chart-svg-width: 100%;
     --results-trust-factor-chart-svg-height: 100%;
@@ -189,26 +189,35 @@
     --results-trust-factor-chart-label-font-size: 2rem;
     --results-trust-factor-chart-label-color: #fff;
     --results-trust-factor-chart-label-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-
+    
     /* Results Trust Factor Chart Verdict Label Section */
     --results-trust-factor-chart-verdict-label-font-size: 1.2rem;
     --results-trust-factor-chart-verdict-label-color: #000;
     --results-trust-factor-chart-verdict-label-margin: 0;
-
+    
     /* ####################### */
     /* Results History Section */
     /* ####################### */
-
+    
     /* Results History List Section */
     --results-history-list-gap: 1rem;
-
+    
     /* Results History Item Section */
     --results-history-item-padding: 1rem;
     --results-history-item-background-color: #e0e0e0;
-    --results-history-item-border-radius: 50px;
+    --results-history-item-border-radius: 1rem;
     --results-history-item-color: #333;
     --results-history-item-font-size: 0.95rem;
-    --results-history-item-min-height: 60px;
+    --results-history-item-min-height: 10%;
+    
+    /* ############################ */
+    /* Standardized Results Section */
+    /* ############################ */
+    
+    /* Standardization for the divs */
+    --results-section-max-height: 60vh;
+    --results-section-min-height: 10vh;
+
 }
 
 /* Layout Section */
@@ -568,7 +577,12 @@ footer {
             border-radius: var(--results-history-item-border-radius);
             background-color: var(--results-history-item-background-color);
         }
-}
+
+
+    /* Standardized styling for the results section */
+    #report, #trustFactor, #safetyHistory {
+        max-height: var(--results-section-max-height);
+    }
 
 
 

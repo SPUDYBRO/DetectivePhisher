@@ -7,6 +7,10 @@ const VERDICT_LABELS = {
   malicious: 'Likely Phishing',
 }
 
+// Radius is kept small enough (r + strokeWidth / 2 <= 50) that the ring stays inside the 100x100 viewBox.
+const DONUT_RADIUS = 35
+const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS
+
 export default function App() {
   const [url, setUrl] = useState('')
   const [result, setResult] = useState(null)
@@ -14,6 +18,11 @@ export default function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [status, setStatus] = useState("Loading")
+
+  // Clamp in case the backend ever returns something outside 0-1.
+  const trustFraction = Math.min(Math.max(result?.trustScore ?? 0, 0), 1)
+  const trustArcLength = trustFraction * DONUT_CIRCUMFERENCE
+  const remainderArcLength = DONUT_CIRCUMFERENCE - trustArcLength
 
   useEffect(() => {
     fetch("/api/health")
@@ -101,10 +110,10 @@ export default function App() {
               <>
                 <div className="donut-chart">
                   <svg viewBox="0 0 100 100" className="chart-svg">
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="#8B6F47" strokeWidth="20" strokeDasharray="102.3 157.08"/>
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="#5a6b77" strokeWidth="20" strokeDasharray="54.78 157.08" strokeDashoffset="-102.3"/>
+                    <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#4d8b47" strokeWidth="20" strokeDasharray={`${trustArcLength} ${DONUT_CIRCUMFERENCE}`}/>
+                    <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#1f699e" strokeWidth="20" strokeDasharray={`${remainderArcLength} ${DONUT_CIRCUMFERENCE}`} strokeDashoffset={-trustArcLength}/>
                   </svg>
-                  <div className="chart-label">{Math.round((result.trustScore ?? 0) * 100)}%</div>
+                  <div className="chart-label">{Math.round(trustFraction * 100)}%</div>
                 </div>
                 <p className={`verdict-label verdict-${result.verdict}`}>
                   {VERDICT_LABELS[result.verdict] ?? result.verdict}
