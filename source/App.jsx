@@ -9,7 +9,7 @@ const VERDICT_LABELS = {
   malicious: 'Likely Phishing',
 }
 
-const MAX_HISTORY_ENTRIES = 5
+const MAX_HISTORY_ENTRIES = 10
 
 // Radius is kept small enough (r + strokeWidth / 2 <= 50) that the ring stays inside the 100x100 viewBox.
 const DONUT_RADIUS = 35
