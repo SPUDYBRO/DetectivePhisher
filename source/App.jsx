@@ -89,7 +89,7 @@ export default function App() {
     if (hasScheme(url.trim())) {
       setNotice('')
     } else {
-      setNotice('No http:// or https:// was given, so we checked it as http://')  
+      setNotice('No protocol specified. This will be submitted as http:// unless you add https://')  
     }
 
     setLoading(true)
