@@ -10,6 +10,13 @@ export default function HelpPage() {
                 <li>Click the "Check URL" button to analyze the link.</li>
                 <li>Review the trust factor results and the phishing report.</li>
             </ol>
+            {/*Explains each verdict so users know what to do next */}
+            <h3>What the results mean</h3>
+            <ul>
+                <li>Looks Safe: nothing suspicious was found in the link.</li>
+                <li>Use Caution: some warning signs were detected, but it may still be safe.</li>
+                <li>Likely Phishing: many warning signs were detected. Do not open it.</li>
+            </ul>
         </section>
     )
 }
