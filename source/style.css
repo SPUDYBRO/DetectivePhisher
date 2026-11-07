@@ -114,7 +114,9 @@
     --url-form-max-width: 600px; 
 
     /* URL Form Input Variable Section */
-    --url-form-input-border: 2px solid #333;
+    --url-form-input-text-align: center;
+    --url-form-input-background-color: transparent;
+    --url-form-input-border: 2px solid #14181d;
     --url-form-input-width: 100%;
     --url-form-input-font-size: 1rem;
     --url-form-input-border-radius: 0;
@@ -254,6 +256,14 @@
     padding: var(--info-page-table-cell-padding);
     text-align: left;
     word-break: break-all;
+}
+
+/* On narrow screens the results stack in one colum instead of three */
+@media (max-width: 700px) {
+    :root {
+        --results-grid-template-columns: 1fr;
+        --results-padding: 2rem 1rem;
+    }
 }
 
 /* Layout Section */
