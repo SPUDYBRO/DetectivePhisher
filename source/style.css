@@ -73,6 +73,7 @@
     --header-margin: 0;
     
     /* Header Link Variable Section */
+    --header-link-color: #c5c9ce;
     --header-link-margin: 0.5rem;
 
     /* Logo Variable Section */
@@ -341,7 +342,7 @@ header {
         
         #extra, a {
             text-decoration: none;
-            color: var(--header-text-color);
+            color: var(--header-link-color);
             margin: var(--header-link-margin);
         }
 }
