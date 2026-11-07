@@ -15,6 +15,18 @@ const MAX_HISTORY_ENTRIES = 5
 const DONUT_RADIUS = 35
 const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS
 
+// Checks if the text starts with http:// or https://, ignoring captial letters
+function hasScheme(text) {
+  const lower =text.toLowerCase()
+  if (lower.startsWith('http://')) {
+    return true
+  }
+  if (lower.startsWith('https://')) {
+    return true
+  }
+  return false
+}
+
 export default function App() {
   const [url, setUrl] = useState('')
   const [result, setResult] = useState(null)
