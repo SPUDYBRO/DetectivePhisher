@@ -76,6 +76,7 @@
     --header-link-margin: 0.5rem;
 
     /* Logo Variable Section */
+    --logo-font-size: 1.2rem;
     --logo-bottom-padding: 0.5rem;
     --logo-left-padding: 1rem;
 
@@ -317,6 +318,8 @@ header {
     display: flex;
     
     #logo, h1{
+        font-style: italic;
+        font-size: var(--logo-font-size);
         color: var(--header-text-color);
         margin: var(--header-margin);
     }
