@@ -1,5 +1,7 @@
 import {checkUrl} from './api.js'
 import { useEffect,useState } from 'react'
+import HelpPage from './HelpPage.jsx'
+import ReportsPage from './ReportsPage.jsx'
 
 const VERDICT_LABELS = {
   benign: 'Looks Safe',
