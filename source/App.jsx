@@ -90,6 +90,7 @@ export default function App() {
               type="text"
               id="url"
               name="url"
+              placeholder="Enter URL"
               value={url}
               onChange={event => setUrl(event.target.value)}
               required
