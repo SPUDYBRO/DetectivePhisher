@@ -61,6 +61,9 @@
     /* Text Color Variable Section */
     --standardised-text-color: #000000;
 
+    /* Page Background Variable Section */
+    --page-background-color: #eeefea;
+
 
     
     /* Header Variable Section */
@@ -253,6 +256,7 @@
 
 /* Layout Section */
 body {
+    background-color: var(--page-background-color);
     margin: 0;
     height: 100%;
 }
