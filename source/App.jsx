@@ -15,12 +15,44 @@ const MAX_HISTORY_ENTRIES = 5
 const DONUT_RADIUS = 35
 const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS
 
+// Checks if the text starts with http:// or https://, ignoring captial letters.
+function hasScheme(text) {
+  const lower =text.toLowerCase()
+  if (lower.startsWith('http://')) {
+    return true
+  }
+  if (lower.startsWith('https://')) {
+    return true
+  }
+  return false
+}
+
+//Checks the url in the browser before it is sent. Gives back an error message, or an empty string if it is fine.
+// The backend checks it again, because frontend checks can be bypassed.
+function validateURL(text) {
+  const trimmed = text.trim()
+
+  if (trimmed === '') {
+    return 'Enter a URL.'
+  }
+  if (trimmed.length > 2048) {
+    return 'That URL is too long (2048 characters max).'
+  }
+  if (trimmed.includes(' ')) {
+    return 'A URL cannot contain spaces.'
+  }
+
+  return ''
+}
+
+
 export default function App() {
   const [url, setUrl] = useState('')
   const [result, setResult] = useState(null)
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState ('') //Holds the message telling the user we assumed http://
   const [status, setStatus] = useState("Loading")
   const [page, setPage] = useState('home') // Remembers which page is showing: 'home', 'reports' or 'help'
 
@@ -44,7 +76,21 @@ export default function App() {
 
   async function handleSubmit(event) {
     event.preventDefault()
-    if (!url.trim()) return
+
+    // Stop here and show the proble if the url fails the browser checks.
+    const problem = validateURL(url)
+    if (problem !== '') {
+      setError(problem)
+      setNotice('')
+      return
+    }
+
+    //Tell the user when no http:// or https:// was entered, and we assumed http://
+    if (hasScheme(url.trim())) {
+      setNotice('')
+    } else {
+      setNotice('No http:// or https:// was given, so we checked it as http://')  
+    }
 
     setLoading(true)
     setError('')
@@ -90,12 +136,13 @@ export default function App() {
               type="text"
               id="url"
               name="url"
+              placeholder="Enter URL"
               value={url}
               onChange={event => setUrl(event.target.value)}
               required
             />
             <button type="submit" disabled={loading}>
-              {loading ? 'Checking…' : 'Check URL'}
+              {loading ? 'Checking…' : 'Check Link'}
             </button>
           </form>
           {error && <p className="error-message">{error}</p>}
