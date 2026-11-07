@@ -233,7 +233,7 @@
     --info-page-padding: 3rem 1.5rem;
     --info-page-table-cell-padding: 0.75rem;
     --info-page-table-border: 1px solid #ccc;
-
+    --info-page-link-color: #1f699e;
 }
 
 
@@ -258,6 +258,20 @@
     padding: var(--info-page-table-cell-padding);
     text-align: left;
     word-break: break-all;
+}
+
+/* Link and button used on the 404 and error pages */
+.info-page-link {
+    color: var(--info-page-link-color);
+}
+
+.info-page-button {
+    border: none;
+    cursor: pointer;
+    color: var(--url-form-button-color);
+    padding: var(--url-form-button-padding);
+    font-size: var(--url-form-button-font-size);
+    background-color: var(--url-form-button-background-color);
 }
 
 /* On narrow screens the results stack in one colum instead of three */
