@@ -34,6 +34,39 @@ export default function TrustBarChart({ history }) {
     return null
   }
 
+  // The drawing area left over once the margins are taken away
+  const plotWidth = CHART_WIDTH - MARGIN_LEFT - MARGIN_RIGHT
+  const plotHeight = CHART_HEIGHT - MARGIN_TOP - MARGIN_BOTTOM
+  const slotWidth = plotWidth / history.length
+  const barWidth = slotWidth * BAR_WIDTH_RATIO
+
+ // Turn each past check into the position and height of one bar
+  const bars = []
+  for (let i = 0; i < history.length; i++) {
+    const entry = history[i]
+    const trustPercent = Math.round(entry.trustScore * PERCENT_MAX)
+    const barHeight = (trustPercent / PERCENT_MAX) * plotHeight
+    const x = MARGIN_LEFT + i * slotWidth + (slotWidth - barWidth) / 2
+    const y = MARGIN_TOP + plotHeight - barHeight
+    bars.push({ x, y, barHeight, trustPercent, url: entry.url, verdict: entry.verdict })
+  }
+
+  // Horizontal grid lines at 0, 25, 50, 75 and 100
+  const ticks = []
+  for (let value = 0; value <= PERCENT_MAX; value += TICK_STEP) {
+    const y = MARGIN_TOP + plotHeight - (value / PERCENT_MAX) * plotHeight
+    ticks.push({ value, y })
+  }
+
+  // Text shown under the chart for the bar being hovered or focused
+  let detailsText = ''
+  if (selected !== null && history[selected]) {
+    const chosen = history[selected]
+    const chosenPercent = Math.round(chosen.trustScore * PERCENT_MAX)
+    detailsText = chosen.url + ': ' + VERDICT_LABELS[chosen.verdict] + ', trust ' + chosenPercent + '%'
+  }
+  
+
   return (
     <div className="bar-chart">
     </div>
