@@ -52,6 +52,7 @@ export default function App() {
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState ('') //Holds the message telling the user we assumed http://
   const [status, setStatus] = useState("Loading")
   const [page, setPage] = useState('home') // Remembers which page is showing: 'home', 'reports' or 'help'
 
