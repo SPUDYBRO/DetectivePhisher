@@ -138,7 +138,10 @@ export default function App() {
               name="url"
               placeholder="Enter URL"
               value={url}
-              onChange={event => setUrl(event.target.value)}
+              onChange={event => {
+                setUrl(event.target.value) 
+                setNotice('')
+              }}
               aria-invalid={error !== ''}
               aria-describedby="url-message"
             />
