@@ -76,7 +76,8 @@ export default function App() {
 
       <main>
         {/* Home content only shows when the home page is chosen */}
-        {page === 'help' && <HelpPage />}       
+        {page === 'help' && <HelpPage />}     
+        {page === 'reports' && <ReportsPage history={history} />}          
         {page === 'home' && (
         <>
         <section id="URLInput">
