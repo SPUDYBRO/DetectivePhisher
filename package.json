@@ -4,11 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "front": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "api": "uvicorn main:app --reload --app-dir backend --reload-dir backend",
-    "start": "concurrently -n Backend,Frontend -c cyan,green \"npm run api\" \"npm run dev\""
+    "back": "uvicorn main:app --reload --app-dir backend --reload-dir backend",
+    "full": "concurrently -n Backend,Frontend -c cyan,green \"npm run back\" \"npm run front\""
   },
   "dependencies": {
     "d3": "^7.9.0",
