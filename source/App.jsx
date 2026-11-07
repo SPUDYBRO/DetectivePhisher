@@ -69,7 +69,8 @@ export default function App() {
           <h1>DetectivePhisher</h1>
         </div>
         <div id="extra">
-          <a href="#">Reports</a>
+          <a href="#" onClick={event => showPage(event, 'home')}>Home</a>
+          <a href="#" onClick={event => showPage(event, 'reports')}>Reports</a>
           <a href="#" onClick={event => showPage(event, 'help')}>Help</a>
         </div>
       </header>
