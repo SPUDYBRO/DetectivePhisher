@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import NotFoundPage from './NotFoundPage.jsx'
+import ErrorBoundary from './ErrorBoundary.jsx'
 import './style.css'
 
 // We have no router, so we read the address bar ourselves
@@ -15,6 +16,9 @@ if (path !== '/' && path !== '/index.html') {
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    {page}
+    {/* Anything that crashes inside the app shows the fallback page */}
+    <ErrorBoundary>
+      {page}
+    </ErrorBoundary>
   </React.StrictMode>,
 )
