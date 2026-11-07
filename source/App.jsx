@@ -96,7 +96,7 @@ export default function App() {
               required
             />
             <button type="submit" disabled={loading}>
-              {loading ? 'Checking…' : 'Check URL'}
+              {loading ? 'Checking…' : 'Check Link'}
             </button>
           </form>
           {error && <p className="error-message">{error}</p>}
