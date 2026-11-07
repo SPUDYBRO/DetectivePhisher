@@ -1,3 +1,9 @@
+// Same labels as App.jsx, so the verdict is worded the same on every page
+const VERDICT_LABELS = {
+  benign: 'Looks Safe',
+  caution: 'Use Caution',
+  malicious: 'Likely Phishing',
+}
 // Shows every url checked this session. The history list is passed in from App.jsx
 export default function ReportsPage({ history }) {
     return (
@@ -16,6 +22,18 @@ export default function ReportsPage({ history }) {
                     <th>Checked at</th>
                     </tr>
                 </thead>
+                <tbody>
+                    {/* One row for each past check. The url is printed as plain text,
+                        so React escapes it and it can never run as code */}
+                    {history.map((entry, index) => (
+                    <tr key={index}>
+                        <td>{entry.url}</td>
+                        <td>{VERDICT_LABELS[entry.verdict] ?? entry.verdict}</td>
+                        <td>{Math.round(entry.trustScore * 100)}%</td>
+                        <td>{entry.checkedAt}</td>
+                    </tr>
+                    ))}
+                </tbody>
                 </table>
             )}
         </section>
