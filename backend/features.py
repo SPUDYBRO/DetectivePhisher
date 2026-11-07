@@ -86,7 +86,7 @@ def get_url_features(url: str) -> dict | None:
     if url.lower().startswith("https://"):
         has_https = 1
     elif not url.lower().startswith("http://"):
-        has_https = float("nan")   # doesn't have either, so we don't know
+        has_https = 0   # doesn't have either, so we don't know. But we will tell the user that we are assuming its https:// unless explicitly stated https
     # FEATURE DONE: has_https
  
     has_at_symbol = "@" in url
