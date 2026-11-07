@@ -76,6 +76,7 @@ export default function App() {
 
       <main>
         {/* Home content only shows when the home page is chosen */}
+        {page === 'help' && <HelpPage />}       
         {page === 'home' && (
         <>
         <section id="URLInput">
