@@ -56,6 +56,10 @@ def get_url_features(url: str) -> dict | None:
     except ValueError:
         # Things like invalid IPv6 brackets make urlparse fail, so the url counts as malformed
         return None
+
+    # A real web address has a dot in it (like example.com), so single word like abcdef is not valid url
+    if "." not in host:
+        return None  
  
  
     # ===== Features that just count things in the whole url =====
