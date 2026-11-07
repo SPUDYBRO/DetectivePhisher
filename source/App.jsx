@@ -15,7 +15,7 @@ const MAX_HISTORY_ENTRIES = 5
 const DONUT_RADIUS = 35
 const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS
 
-// Checks if the text starts with http:// or https://, ignoring captial letters
+// Checks if the text starts with http:// or https://, ignoring captial letters.
 function hasScheme(text) {
   const lower =text.toLowerCase()
   if (lower.startsWith('http://')) {
@@ -26,6 +26,25 @@ function hasScheme(text) {
   }
   return false
 }
+
+//Checks the url in the browser before it is sent. Gives back an error message, or an empty string if it is fine.
+// The backend checks it again, because frontend checks can be bypassed.
+function validateURL(text) {
+  const trimmed = text.trim()
+
+  if (trimmed === '') {
+    return 'Enter a URL.'
+  }
+  if (trimmed.length > 2048) {
+    return 'That URL is too long (2048 characters max).'
+  }
+  if (trimmed.includes(' ')) {
+    return 'A URL cannot contain spaces.'
+  }
+
+  return ''
+}
+
 
 export default function App() {
   const [url, setUrl] = useState('')
