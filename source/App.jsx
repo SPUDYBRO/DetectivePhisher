@@ -22,7 +22,7 @@ export default function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [status, setStatus] = useState("Loading")
-  const [page, setPage] = useState('home') // Remembers which page is showing 'home', 'reports' or 'help'
+  const [page, setPage] = useState('home') // Remembers which page is showing: 'home', 'reports' or 'help'
 
   // Clamp in case the backend ever returns something outside 0-1.
   const trustFraction = Math.min(Math.max(result?.trustScore ?? 0, 0), 1)
@@ -36,6 +36,11 @@ export default function App() {
     .catch(() => setStatus('offline'))
   }, []);
 
+  // Changes the page and stops the link from reloading the browser
+  function showPage(event, pageName) {
+    event.preventDefault()
+    setPage(pageName)
+  }
 
   async function handleSubmit(event) {
     event.preventDefault()
