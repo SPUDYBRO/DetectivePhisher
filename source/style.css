@@ -141,7 +141,8 @@
     --url-form-button-disabled-opacity: 0.6;
 
     /* URL Input Error Message Section */
-    --url-input-error-message-color: #d9534f;
+    --url-input-notice-color: #1f699e;
+    --url-input-error-message-color: #b02a37;    
     --url-input-error-message-margin-top: 1rem;
 
 
@@ -475,6 +476,11 @@ footer {
         color: var(--url-input-error-message-color);
         margin-top: var(--url-input-error-message-margin-top);
     }
+    /* Blue message for the http assumption, so it does not look like an error */
+    .notice-message {
+        color: var(--url-input-notice-color);
+        margin-top: var(--url-input-error-message-margin-top);
+    }    
 }
         
 /* Results Section */
