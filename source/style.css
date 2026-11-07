@@ -99,7 +99,7 @@
     /* URL Input Variable Section */
     --standardised-width: 100%;
     --url-input-padding: 3rem 0.5rem;
-    --url-input-background-color: #ffffff;
+    --url-input-background-color: #eeefea;
 
     /* URL Input Paragraph Variable Section */
     --url-input-paragraph-font-size: 0.95rem;
@@ -147,7 +147,7 @@
     --results-padding: 3rem 2rem;
     --results-grid-template-columns: 1fr 1fr 1fr;
     --results-gap: 3rem;
-    --results-background-color: #f5f5f5;
+    --results-background-color: #eeefea;
     
     /* ###################### */
     /* Results Report Section */
