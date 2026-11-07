@@ -452,7 +452,7 @@ footer {
             opacity: var(--url-form-button-disabled-opacity);
         }
         
-    #URLInput .error-message {
+    .error-message {
         color: var(--url-input-error-message-color);
         margin-top: var(--url-input-error-message-margin-top);
     }
