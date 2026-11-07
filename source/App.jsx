@@ -70,7 +70,7 @@ export default function App() {
         </div>
         <div id="extra">
           <a href="#">Reports</a>
-          <a href="#">Help</a>
+          <a href="#" onClick={event => showPage(event, 'help')}>Help</a>
         </div>
       </header>
 
