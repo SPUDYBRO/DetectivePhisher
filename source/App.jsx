@@ -130,7 +130,7 @@ export default function App() {
         <section id="URLInput">
           <h2>Check the link before you open it</h2>
           <p>Paste any URL. We check it so you don't have to worry about phishing.</p>
-          <form id="urlForm" onSubmit={handleSubmit}>
+          <form id="urlForm" onSubmit={handleSubmit} noValidate> {/* noValidate turns off the browser's built-in validation so our own validation messages show instead */}
             <label htmlFor="url">Enter URL:</label>
             <input
               type="text"
@@ -139,13 +139,18 @@ export default function App() {
               placeholder="Enter URL"
               value={url}
               onChange={event => setUrl(event.target.value)}
-              required
+              aria-invalid={error !== ''}
+              aria-describedby="url-message"
             />
             <button type="submit" disabled={loading}>
               {loading ? 'Checking…' : 'Check Link'}
             </button>
           </form>
-          {error && <p className="error-message">{error}</p>}
+          {/* Messages sit under the input and are linked to it for screen readers */}
+          <div id="url-message">
+            {error && <p className="error-message" role="alert">{error}</p>}
+            {notice && <p className="notice-message">{notice}</p>}
+          </div>
         </section>
 
 
