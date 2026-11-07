@@ -618,6 +618,7 @@ footer {
     #report, #trustFactor, #safetyHistory {
         max-height: var(--results-section-max-height);
     }
+}
 
 
 
@@ -627,7 +628,7 @@ footer {
 
 
 
-/* Absolute shit box */
+/* Status Box Selection */
 /* Status box down below */
 .status-box {
     position: static;
@@ -755,4 +756,3 @@ footer {
             transform: scale(1.2);
         }
     }
-}
