@@ -147,8 +147,8 @@ export default function App() {
         <div id="footerContent">
         <p>&copy; 2026 DetectivePhisher</p>
         </div>
-
-        <output class={`status-box ${status}`} title='The connection to the server'>
+        {/*class is reserved word in React, so we use className instead*/}
+        <output className={`status-box ${status}`} title='The connection to the server'>
           <p>{status}</p>
         </output>
       </footer>
