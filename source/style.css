@@ -236,6 +236,21 @@
     padding: var(--info-page-padding);
 }
 
+/* Table of past checks on the reports page */
+.reports-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+/* break-all stops a long url from pushing the table off the screen on a phone */
+.reports-table th,
+.reports-table td {
+    border: var(--info-page-table-border);
+    padding: var(--info-page-table-cell-padding);
+    text-align: left;
+    word-break: break-all;
+}
+
 /* Layout Section */
 body {
     margin: 0;
