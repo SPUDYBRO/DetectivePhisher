@@ -76,7 +76,21 @@ export default function App() {
 
   async function handleSubmit(event) {
     event.preventDefault()
-    if (!url.trim()) return
+
+    // Stop here and show the proble if the url fails the browser checks.
+    const problem = validateURL(url)
+    if (problem !== '') {
+      setError(problem)
+      setNotice('')
+      return
+    }
+
+    //Tell the user when no http:// or https:// was entered, and we assumed http://
+    if (hasScheme(url.trim())) {
+      setNotice('')
+    } else {
+      setNotice('No http:// or https:// was given, so we checked it as http://')  
+    }
 
     setLoading(true)
     setError('')
