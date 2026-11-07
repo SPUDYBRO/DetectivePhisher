@@ -383,7 +383,7 @@ footer {
     padding: var(--url-input-padding);
     background-color: var(--url-input-background-color);
 
-    #URLInput > h2{
+    & > h2{
         color: var(--custom-h2-color);
         margin: var(--custom-h2-margin);
         max-width: var(--custom-h2-max-width);
@@ -392,7 +392,7 @@ footer {
         font-family: var(--custom-h2-font-family);
     }
 
-    #URLInput > p {
+    & > p {
         color: var(--url-input-paragraph-color);
         margin: var(--url-input-paragraph-margin);
         max-width: var(--url-input-paragraph-max-width);
