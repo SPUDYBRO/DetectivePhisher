@@ -3,7 +3,13 @@ export default function HelpPage() {
     return (
         <section className="info-page">
             <h2>Help</h2>
-            <p>This is the help page. Here you can find information about how to use the app.</p>
+            {/* Steps for a first time user */}
+            <h3>How to use DetectivePhisher</h3>
+            <ol>
+                <li>Go to the home page and paste a link into the box.</li>
+                <li>Click the "Check URL" button to analyze the link.</li>
+                <li>Review the trust factor results and the phishing report.</li>
+            </ol>
         </section>
     )
 }
