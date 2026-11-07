@@ -75,6 +75,9 @@ export default function App() {
       </header>
 
       <main>
+        {/* Home content only shows when the home page is chosen */}
+        {page === 'home' && (
+        <>
         <section id="URLInput">
           <h2>Check the link before you open it</h2>
           <p>Paste any URL. We check it so you don't have to worry about phishing.</p>
@@ -149,6 +152,8 @@ export default function App() {
             )}
           </div>
         </section>
+        </>
+        )}
       </main>
 
       <footer>
