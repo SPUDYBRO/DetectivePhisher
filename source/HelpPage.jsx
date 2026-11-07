@@ -17,6 +17,13 @@ export default function HelpPage() {
                 <li>Use Caution: some warning signs were detected, but it may still be safe.</li>
                 <li>Likely Phishing: many warning signs were detected. Do not open it.</li>
             </ul>
+            {/* Tells the user the tool is not a guarantee */}
+            <h3>Limits of this tool</h3>
+            <p>
+                DetectivePhisher only looks at how the link is written. It does not
+                open the website. A result is a risk indicator, not a guarantee, so
+                stay careful even when a link looks safe.
+            </p>
         </section>
     )
 }
