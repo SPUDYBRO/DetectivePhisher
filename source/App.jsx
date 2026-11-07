@@ -148,7 +148,7 @@ export default function App() {
               <div className="history-list">
                 {history.map((entry, index) => (
                   <div key={index} className="history-item">
-                    <span>Past URL entry</span>
+                    <span>{entry.url}</span>
                   </div>
                 ))}
               </div>
