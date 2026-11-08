@@ -1,10 +1,11 @@
 import TrustBarChart from './TrustBarChart.jsx'
-// Same labels as App.jsx, so the verdict is worded the same on every page
+
+// CHANGED (1): keys match the backend's two verdicts
 const VERDICT_LABELS = {
-  benign: 'Looks Safe',
-  caution: 'Use Caution',
-  malicious: 'Likely Phishing',
+  legitimate: 'Looks Safe',
+  phishing: 'Likely Phishing'
 }
+
 // Shows every url checked this session. The history list is passed in from App.jsx
 export default function ReportsPage({ history }) {
     return (
@@ -16,28 +17,27 @@ export default function ReportsPage({ history }) {
                     <h3>How do my checks compare?</h3>
                     <TrustBarChart history={history} />
                 </>
-            )}           
-            {/* Show a message when nothing has been checked yet */}
+            )}
             {history.length === 0 && <p>No URLs checked yet this session.</p>}
-            {/* Table only shows once there is something to list */}
             {history.length > 0 && (
                 <table className="reports-table">
                 <thead>
                     <tr>
-                    <th>URL</th>
-                    <th>Result</th>
-                    <th>Trust</th>
-                    <th>Checked at</th>
+                    <th scope="col">URL</th>
+                    <th scope="col">Result</th>
+                    <th scope="col">Phishing probability</th>
+                    <th scope="col">Confidence</th>
+                    <th scope="col">Checked at</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {/* One row for each past check. The url is printed as plain text,
-                        so React escapes it and it can never run as code */}
                     {history.map((entry, index) => (
                     <tr key={index}>
                         <td>{entry.url}</td>
                         <td>{VERDICT_LABELS[entry.verdict] ?? entry.verdict}</td>
-                        <td>{Math.round(entry.trustScore * 100)}%</td>
+                        {/* CHANGED (3): camelCase, to match the name saved in App.jsx */}
+                        <td>{Math.round(entry.phishingProbability * 100)}%</td>
+                        <td>{Math.round(entry.confidence * 100)}%</td>
                         <td>{entry.checkedAt}</td>
                     </tr>
                     ))}

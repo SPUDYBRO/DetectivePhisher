@@ -1,12 +1,11 @@
-import {checkUrl} from './api.js'
+import {checkURL} from './api.js'
 import { useEffect,useState } from 'react'
 import HelpPage from './HelpPage.jsx'
 import ReportsPage from './ReportsPage.jsx'
 
 const VERDICT_LABELS = {
-  benign: 'Looks Safe',
-  caution: 'Use Caution',
-  malicious: 'Likely Phishing',
+  legitimate: "Looks safe",
+  phishing: "Likely phishing"
 }
 
 const MAX_HISTORY_ENTRIES = 10
@@ -46,6 +45,9 @@ function validateURL(text) {
 }
 
 
+
+
+
 export default function App() {
   const [url, setUrl] = useState('')
   const [result, setResult] = useState(null)
@@ -57,9 +59,12 @@ export default function App() {
   const [page, setPage] = useState('home') // Remembers which page is showing: 'home', 'reports' or 'help'
 
   // Clamp in case the backend ever returns something outside 0-1.
-  const trustFraction = Math.min(Math.max(result?.trustScore ?? 0, 0), 1)
-  const trustArcLength = trustFraction * DONUT_CIRCUMFERENCE
-  const remainderArcLength = DONUT_CIRCUMFERENCE - trustArcLength
+  let safeFraction = 0
+  if (result) {
+    safeFraction = Math.min(Math.max(1 - result.phishing_probability, 0), 1)
+  }
+  const safeArcLength = safeFraction * DONUT_CIRCUMFERENCE
+  const remainderArcLength = DONUT_CIRCUMFERENCE - safeArcLength
 
   useEffect(() => {
     fetch("/api/health")
@@ -102,12 +107,20 @@ export default function App() {
 
     setLoading(true)
     setError('')
+    setResult(null)
     try {
-      const data = await checkUrl(url)
+      const data = await checkURL(url)
       setResult(data)
       setHistory(prev => [
-        {url, verdict: data.verdict, trustScore: data.trustScore, checkedAt: new Date().toLocaleString()},
-        ...prev,
+        {
+          url,
+          verdict: data.verdict,
+          confidence: data.confidence,
+          phishingProbability: data.phishing_probability,
+          features: data.features,
+          checkedAt: new Date().toLocaleString()
+        },
+        ...prev
       ].slice(0, MAX_HISTORY_ENTRIES))
     } catch (err) {
       setError(err.message)
@@ -171,11 +184,19 @@ export default function App() {
 
 
         <section id="results">
+          {result && (
+            <div id="verdict" className={`verdict-${result.verdict}`}>
+              <p className="verdict-headline">{VERDICT_LABELS[result.verdict] ?? result.verdict}</p>
+              <p className="verdict-confidence">{Math.round(result.confidence * 100)}% confident</p>
+            </div>
+          )}
+
           <div id="report">
             <h3>Report</h3>
             {result ? (
               <ul>
-                {result.report.map((reason, index) => (
+                {/* CHANGED (7): the backend sends "reasons", not "report". React prints these as plain text. */}
+                {result.reasons.map((reason, index) => (
                   <li key={index}>{reason}</li>
                 ))}
               </ul>
@@ -187,29 +208,25 @@ export default function App() {
           <div id="trustFactor">
             <h3>Trust Factor</h3>
             {result ? (
-              <>
-                <div className="donut-chart">
-                  {/* role and label let screen readers read the score, since they cannot see the drawing */}
-                  <svg 
-                    viewBox="0 0 100 100" 
-                    className="chart-svg"
-                    role="img"
-                    aria-label={`Trust score ${Math.round(trustFraction * 100)} percent`}
-                  >
-                      <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#4d8b47" strokeWidth="20" strokeDasharray={`${trustArcLength} ${DONUT_CIRCUMFERENCE}`}/>
-                      <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#1f699e" strokeWidth="20" strokeDasharray={`${remainderArcLength} ${DONUT_CIRCUMFERENCE}`} strokeDashoffset={-trustArcLength}/>
-                  </svg>
-                  <div className="chart-label">{Math.round(trustFraction * 100)}%</div>
-                </div>
-                <p className={`verdict-label verdict-${result.verdict}`}>
-                  {VERDICT_LABELS[result.verdict] ?? result.verdict}
-                </p>
-              </>
+              <div className="donut-chart">
+                {/* role and label let screen readers read the score, since they cannot see the drawing */}
+                <svg 
+                  viewBox="0 0 100 100" 
+                  className="chart-svg"
+                  role="img"
+                  aria-label={`Safety score ${Math.round(safeFraction * 100)} percent`}
+                >
+                    <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#4d8b47" strokeWidth="20" strokeDasharray={`${safeArcLength} ${DONUT_CIRCUMFERENCE}`}/>
+                    <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#1f699e" strokeWidth="20" strokeDasharray={`${remainderArcLength} ${DONUT_CIRCUMFERENCE}`} strokeDashoffset={-safeArcLength}/>
+                </svg>
+                <div className="chart-label">{Math.round(safeFraction * 100)}%</div>
+              </div>
             ) : (
               <p>Trust score will appear here after a check.</p>
             )}
           </div>
 
+          
           <div id="safetyHistory">
             <h3>History</h3>
             {history.length === 0 ? (

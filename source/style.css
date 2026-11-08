@@ -331,15 +331,12 @@
         }
 
         /* One colour for each verdict, matching the legend */
-        .bar-benign {
+        .bar-legitimate {
             fill: var(--bar-chart-benign-color);
         }
 
-        .bar-caution {
-            fill: var(--bar-chart-caution-color);
-        }
 
-        .bar-malicious {
+        .bar-phishing {
             fill: var(--bar-chart-malicious-color);
         }
 
@@ -363,15 +360,12 @@
             height: var(--bar-chart-legend-swatch-size);
         }
 
-        .legend-benign {
+        .legend-legitimate {
             background-color: var(--bar-chart-benign-color);
         }
 
-        .legend-caution {
-            background-color: var(--bar-chart-caution-color);
-        }
 
-        .legend-malicious {
+        .legend-phishing {
             background-color: var(--bar-chart-malicious-color);
         }
 
