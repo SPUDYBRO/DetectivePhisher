@@ -256,6 +256,12 @@
     --bar-chart-legend-swatch-size: 0.9rem;
     --bar-chart-details-min-height: 1.5rem;
 
+    /* Focus Variable Section */
+    --focus-outline-width: 0.15rem;
+    --focus-outline-color: #1f699e;
+    --focus-outline-offset: 0.2rem;
+    --header-focus-outline-color: #fdfafa;
+
 }
 
 
@@ -374,6 +380,13 @@
         min-height: var(--bar-chart-details-min-height);
     }
 
+/* Focus Section (keyboard users need to see where they are) */
+a:focus-visible,
+button:focus-visible {
+    outline: var(--focus-outline-width) solid var(--focus-outline-color);
+    outline-offset: var(--focus-outline-offset);
+}
+
 /* Layout Section */
 body {
     background-color: var(--page-background-color);
@@ -468,6 +481,11 @@ header {
     a[aria-current="page"] {
         color: var(--header-link-active-color);
         text-decoration: var(--header-link-active-decoration);
+    }
+
+    /* The blue outline is hard to see on the dark header, so use a light one */
+    a:focus-visible {
+        outline-color: var(--header-focus-outline-color);
     }
 
 }
