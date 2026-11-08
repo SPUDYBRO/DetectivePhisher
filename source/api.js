@@ -5,6 +5,14 @@ export async function checkUrl(url) {
     body: JSON.stringify({url}),
   })
   const data = await response.json()
-  if (!response.ok) throw new Error(data.detail || 'Could not check this URL.')
+  if (!response.ok) {
+    let message = 'Could not check this URL.'
+    if (data.error && data.error.message) {
+      message = data.error.message
+    } else if (typeof data.detail === 'string') {
+      message = data.detail
+    }
+    throw new Error(message)
+  }
   return data
 }

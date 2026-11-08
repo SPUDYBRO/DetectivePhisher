@@ -9,7 +9,7 @@ const VERDICT_LABELS = {
   malicious: 'Likely Phishing',
 }
 
-const MAX_HISTORY_ENTRIES = 5
+const MAX_HISTORY_ENTRIES = 10
 
 // Radius is kept small enough (r + strokeWidth / 2 <= 50) that the ring stays inside the 100x100 viewBox.
 const DONUT_RADIUS = 35
@@ -74,6 +74,14 @@ export default function App() {
     setPage(pageName)
   }
 
+  // Marks the link for the page being shown so screenreaders can say "current page"
+  function currentFor(pageName) {
+    if (page === pageName) {
+      return 'page'
+    }
+    return undefined
+  }
+
   async function handleSubmit(event) {
     event.preventDefault()
 
@@ -89,7 +97,7 @@ export default function App() {
     if (hasScheme(url.trim())) {
       setNotice('')
     } else {
-      setNotice('No http:// or https:// was given, so we checked it as http://')  
+      setNotice('No protocol specified. This will be submitted as http:// unless you add https://')  
     }
 
     setLoading(true)
@@ -114,11 +122,12 @@ export default function App() {
         <div id="logo">
           <h1>DetectivePhisher</h1>
         </div>
-        <div id="extra">
-          <a href="#" onClick={event => showPage(event, 'home')}>Home</a>
-          <a href="#" onClick={event => showPage(event, 'reports')}>Reports</a>
-          <a href="#" onClick={event => showPage(event, 'help')}>Help</a>
-        </div>
+        {/* nav tells screen readers this is the main menu */}
+        <nav id="extra" aria-label="Main">
+          <a href="#" aria-current={currentFor('home')} onClick={event => showPage(event, 'home')}>Home</a>
+          <a href="#" aria-current={currentFor('reports')} onClick={event => showPage(event, 'reports')}>Reports</a>
+          <a href="#" aria-current={currentFor('help')} onClick={event => showPage(event, 'help')}>Help</a>
+        </nav>
       </header>
 
       <main>
@@ -130,7 +139,7 @@ export default function App() {
         <section id="URLInput">
           <h2>Check the link before you open it</h2>
           <p>Paste any URL. We check it so you don't have to worry about phishing.</p>
-          <form id="urlForm" onSubmit={handleSubmit}>
+          <form id="urlForm" onSubmit={handleSubmit} noValidate> {/* noValidate turns off the browser's built-in validation so our own validation messages show instead */}
             <label htmlFor="url">Enter URL:</label>
             <input
               type="text"
@@ -138,14 +147,22 @@ export default function App() {
               name="url"
               placeholder="Enter URL"
               value={url}
-              onChange={event => setUrl(event.target.value)}
-              required
+              onChange={event => {
+                setUrl(event.target.value) 
+                setNotice('')
+              }}
+              aria-invalid={error !== ''}
+              aria-describedby="url-message"
             />
             <button type="submit" disabled={loading}>
               {loading ? 'Checking…' : 'Check Link'}
             </button>
           </form>
-          {error && <p className="error-message">{error}</p>}
+          {/* Messages sit under the input and are linked to it for screen readers */}
+          <div id="url-message">
+            {error && <p className="error-message" role="alert">{error}</p>}
+            {notice && <p className="notice-message">{notice}</p>}
+          </div>
         </section>
 
 
@@ -172,9 +189,15 @@ export default function App() {
             {result ? (
               <>
                 <div className="donut-chart">
-                  <svg viewBox="0 0 100 100" className="chart-svg">
-                    <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#4d8b47" strokeWidth="20" strokeDasharray={`${trustArcLength} ${DONUT_CIRCUMFERENCE}`}/>
-                    <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#1f699e" strokeWidth="20" strokeDasharray={`${remainderArcLength} ${DONUT_CIRCUMFERENCE}`} strokeDashoffset={-trustArcLength}/>
+                  {/* role and label let screen readers read the score, since they cannot see the drawing */}
+                  <svg 
+                    viewBox="0 0 100 100" 
+                    className="chart-svg"
+                    role="img"
+                    aria-label={`Trust score ${Math.round(trustFraction * 100)} percent`}
+                  >
+                      <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#4d8b47" strokeWidth="20" strokeDasharray={`${trustArcLength} ${DONUT_CIRCUMFERENCE}`}/>
+                      <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#1f699e" strokeWidth="20" strokeDasharray={`${remainderArcLength} ${DONUT_CIRCUMFERENCE}`} strokeDashoffset={-trustArcLength}/>
                   </svg>
                   <div className="chart-label">{Math.round(trustFraction * 100)}%</div>
                 </div>
