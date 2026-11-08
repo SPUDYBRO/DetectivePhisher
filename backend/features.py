@@ -1,192 +1,91 @@
-import re
-import numpy as np
-import pandas
 from urllib.parse import urlparse
+import ipaddress
 
-
-
-IP_PATTERN = re.compile(
-    r"^(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}"
-    r"(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)$"
-)
-SPECIAL_CHARS_PATTERN = re.compile(r"[@%=&?]")
-
-# The columns that get added to the csv. Keep these in the same order as the values in get_url_features
-FEATURE_COLUMNS = [ # All commented out sections are removed because of EDA
-    # "url_length",
+# The columns that the model gets trained on and used to predict with. Keep these in the same order as the values in extract_features
+FEATURE_COLUMNS = [
     "num_dots",
     "num_hyphens",
     "host_hyphens",
-    # "num_digits",
-    # "num_special_chars",
     "has_https",
     "has_ip",
-    # "num_subdomains",
     "domain_length",
     "has_at_symbol",
-    # "path_length",
-    # "url_entropy"
 ]
 
 
-
-def get_url_features(url: str) -> dict | None:
-    """Works out the features of a single url (length, dots, hyphens, digits and so on)
+def extract_features(url: str) -> dict[str, float]:
+    """Works out the features of a single url
+    features include ["num_dots", "num_hyphens", "host_hyphens", "has_https", "has_ip", "domain_length", "has_at_symbol"]
+    
+    Note: To use this function, you must have already validated the URL is not malformed via the `validate_url` function
  
     Args:
         url (str): The url to work out the features of
  
     Returns:
-        dict | None: The features of the url, or None if the url is empty or malformed
+        dict: The features of the url
     """
-    # Empty cells are read in as NaN (not a string), so those count as empty too
-    if pandas.isna(url) or url == "":
-        return None
+    
  
-    # urlparse needs the http:// at the start to find the hostname, so add it if the url doesn't have it
-    if url.startswith(("http://", "https://")):
-        full_url = url
-    else:
-        full_url = f"http://{url}"
- 
-    try:
-        parsed_url = urlparse(full_url)
-        host = parsed_url.hostname or ""   # hostname already leaves the port out, so there is nothing to split off
-        path = parsed_url.path or ""
-    except ValueError:
-        # Things like invalid IPv6 brackets make urlparse fail, so the url counts as malformed
-        return None
-
-    # A real web address has a dot in it (like example.com), so single word like abcdef is not valid url
-    if "." not in host:
-        return None  
- 
+    parsed_url = urlparse(url)
+    
+    if parsed_url.hostname is None:
+        raise ValueError("extract_features needs a validated URL with a hostname") # This can only happen if we dont validate first
  
     # ===== Features that just count things in the whole url =====
  
-    # url_length = len(url) Removed because of EDA
-    # # FEATURE DONE: url_length
- 
     num_dots = url.count(".")
-    # FEATURE DONE: num_dots
  
     num_hyphens = url.count("-")
-    # FEATURE DONE: num_hyphens
  
-    # num_digits = 0 Removed because of EDA
-    # for character in url:
-    #     if character.isdigit():
-    #         num_digits += 1
-    # # FEATURE DONE: num_digits
- 
-    # num_special_chars = len(SPECIAL_CHARS_PATTERN.findall(url)) Removed because of EDA
-    # # FEATURE DONE: num_special_chars
  
     has_https = 0
     if url.lower().startswith("https://"):
         has_https = 1
-    elif not url.lower().startswith("http://"):
-        has_https = 0   # doesn't have either, so we don't know. But we will tell the user that we are assuming its https:// unless explicitly stated https
-    # FEATURE DONE: has_https
  
-    has_at_symbol = "@" in url
-    # FEATURE DONE: has_at_symbol
+ 
+    has_at_symbol = 0
+    if "@" in url:
+        has_at_symbol = 1
  
  
     # ===== Features that come from the host (the domain part) =====
  
     # hyphens in the host only, the whole-url num_hyphens above is mostly hyphens from article titles in the path
-    host_hyphens = host.count("-")
-    # FEATURE DONE: host_hyphens
+    host_hyphens = parsed_url.hostname.count("-")
  
-    domain_length = len(host)
-    # FEATURE DONE: domain_length
+    domain_length = len(parsed_url.hostname)
  
     has_ip = False
-    if IP_PATTERN.match(host):
+    try: # check if the url is an IP.
+        ipaddress.IPv4Address(parsed_url.hostname)
         has_ip = True
-    # FEATURE DONE: has_ip
- 
-    # An IP address has no subdomains, and www is not counted as one either
-    # if has_ip: Removed because of EDA
-    #     num_subdomains = 0
-    # else:
-    #     host_without_www = host.removeprefix("www.")
-    #     num_subdomains = max(host_without_www.count(".") - 1, 0)
-    # # FEATURE DONE: num_subdomains
- 
- 
-    # ===== Features that come from the path =====
- 
-    # path_length = len(path) Removed because of EDA
-    # # FEATURE DONE: path_length
- 
- 
-    # # ===== URL entropy ===== Removed because of EDA
-    # # Lowercase first so HTTPS:// and WWW. are caught too, and capital letters don't add extra "different" characters
-    # clean_url = url.lower()
-    # # remove http / https / www / to get rid of noise
-    # if clean_url.startswith("https://"):
-    #     clean_url = clean_url.removeprefix("https://")
-    # elif clean_url.startswith("http://"):
-    #     clean_url = clean_url.removeprefix("http://")
- 
-    # if clean_url.startswith("www."):
-    #     clean_url = clean_url.removeprefix("www.")
- 
-    # total = len(clean_url)
- 
-    # # count how many times each character appears in the URL
-    # chars = pandas.Series(list(clean_url))
-    # counts = chars.value_counts()
- 
-    # # the formula is: H = -sum(p * log2(p)) for each character
-    # url_entropy = 0
-    # for char, count in counts.items():
-    #     p = count / total
-    #     url_entropy = url_entropy - p * math.log2(p)
-    # # FEATURE DONE: url_entropy
- 
- 
-    # Every feature is finished by this point, this just puts them together in the same order as FEATURE_COLUMNS
-    features = {
-        # "url_length": url_length, Removed because of EDA
-        "num_dots": num_dots,
-        "num_hyphens": num_hyphens,
-        "host_hyphens": host_hyphens,   # new, add "host_hyphens" to FEATURE_COLUMNS (features.py and app.py) to use it
-        # "num_digits": num_digits, Removed because of EDA
-        # "num_special_chars": num_special_chars, Removed because of EDA
-        "has_https": has_https,
-        "has_ip": has_ip,
-        # "num_subdomains": num_subdomains, Removed because of EDA
-        "domain_length": domain_length,
-        "has_at_symbol": has_at_symbol,
-        # "path_length": path_length, Removed because of EDA
-        # "url_entropy": url_entropy Removed because of EDA
+    except ValueError:
+        pass
+
+    return {
+        "num_dots": float(num_dots),
+        "num_hyphens": float(num_hyphens),
+        "host_hyphens": float(host_hyphens),
+        "has_https": float(has_https),
+        "has_ip": float(has_ip),
+        "domain_length": float(domain_length),
+        "has_at_symbol": float(has_at_symbol),
     }
- 
-    return features
+    
 
-
-def vectorize_features(features: dict) -> list[float]:
-    """Turns a get_url_features() dict into an ordered numeric vector a model can use.
-
-    Booleans become 0/1, and the unknown has_https case (NaN) becomes 0.5 so it sits
-    halfway between "http" (0) and "https" (1) instead of breaking the model.
+def features_dict_to_ordered_list(features: dict[str, float]) -> list[float]:
+    """Puts the feature values into the same order the model was trained on (FEATURE_COLUMNS)
+    Returned data is ready to be predicted
 
     Args:
-        features (dict): Output of get_url_features()
+        features (dict[str, float]): The dict of features extracted from a URL by extract_features function
 
     Returns:
-        list[float]: The feature values in the same order as FEATURE_COLUMNS
+        list[float]: The ordered list of features, ready for model prediction
     """
-    vector = []
+    ordered_values = []
     for column in FEATURE_COLUMNS:
-        value = features[column]
-        if isinstance(value, bool):
-            vector.append(float(value))
-        elif value != value:   # NaN is the only value that isn't equal to itself
-            vector.append(0.5)
-        else:
-            vector.append(float(value))
-    return vector
+        ordered_values.append(features[column])
+        
+    return ordered_values

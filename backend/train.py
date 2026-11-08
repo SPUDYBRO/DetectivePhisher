@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import sys
+from features import FEATURE_COLUMNS
 
 class Result(NamedTuple):
     success: bool
@@ -22,22 +23,7 @@ MODEL_DIR = BASE_DIR / "Models"
 MODEL_PATH = MODEL_DIR / "Phishing_Model.joblib"
 
 
-# The columns that get added to the csv. Keep these in the same order as the values in get_url_features
-FEATURE_COLUMNS = [ # All commented out sections are removed because of EDA
-    # "url_length",
-    "num_dots",
-    "num_hyphens",
-    "host_hyphens",
-    # "num_digits",
-    # "num_special_chars",
-    "has_https",
-    "has_ip",
-    # "num_subdomains",
-    "domain_length",
-    "has_at_symbol",
-    # "path_length",
-    # "url_entropy"
-]
+
 
 
 
@@ -65,7 +51,8 @@ def main() -> Result:
     
     
     fix_nan_in_has_https(dataset)
-    feature_table = dataset[FEATURE_COLUMNS]
+    feature_table = dataset[FEATURE_COLUMNS].to_numpy() # Was changed to include .to_numpy() because before a harmless warning would show up explaining that x does not have valid feature names but DecisiontreeClassifier was fitted with feature names
+                                                        # This changes nothing and only exists to silence it
     labels = swap_type_to_int(dataset)
     
     if len(feature_table) != len(labels):
@@ -181,6 +168,7 @@ def train_model(features_train, labels_train):
         DecisionTreeClassifier: Returns the trained DecisionTreeClassifier class (ie the model)
     """
     print("Training model on train data")
+    
     model = DecisionTreeClassifier(max_depth=10, random_state=1)
     model.fit(features_train, labels_train)
     

@@ -1,32 +1,28 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from fastapi import FastAPI
+from schemas import PredictRequest, PredictResponse, HealthResponse
+from validation import validate_url
+from features import extract_features, features_dict_to_ordered_list, FEATURE_COLUMNS
+from prediction import make_prediction
+from train import MODEL_PATH
 
-from train_modules import predict_url
 
 app = FastAPI(title="DetectivePhisher API")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
-class URLCheckRequest(BaseModel):
-    url: str = Field(..., min_length=1, max_length=2048)
-
-
-@app.get("/api/health")
+@app.get("/api/health", response_model=HealthResponse, summary="Front-end connectivity check", description="Used by the front-end to identify if it is able to connect to the server or not")
 def health():
-    return {"status": "online"}
+    return HealthResponse(status="online")
 
 
-@app.post("/api/check-url")
-def check_url(payload: URLCheckRequest):
-    result = predict_url(payload.url)
-    if result is None:
-        raise HTTPException(status_code=400, detail="That doesn't look like a valid URL.")
-    return result
+
+@app.post("/api/predict", response_model=PredictResponse, summary="Check a URL", description="Takes a URL and returns if it looks like its a phishing link or a legitimate link based off its features")
+def predict(data: PredictRequest):
+
+    # Input handling and extraction
+    url = validate_url(data.url)
+
+    features = extract_features(url)
+    ordered_features = features_dict_to_ordered_list(features)
+
+    return make_prediction(features, ordered_features)
