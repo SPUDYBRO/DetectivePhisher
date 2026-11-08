@@ -189,9 +189,15 @@ export default function App() {
             {result ? (
               <>
                 <div className="donut-chart">
-                  <svg viewBox="0 0 100 100" className="chart-svg">
-                    <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#4d8b47" strokeWidth="20" strokeDasharray={`${trustArcLength} ${DONUT_CIRCUMFERENCE}`}/>
-                    <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#1f699e" strokeWidth="20" strokeDasharray={`${remainderArcLength} ${DONUT_CIRCUMFERENCE}`} strokeDashoffset={-trustArcLength}/>
+                  {/* role and label let screen readers read the score, since they cannot see the drawing */}
+                  <svg 
+                    viewBox="0 0 100 100" 
+                    className="chart-svg"
+                    role="img"
+                    aria-label={`Trust score ${Math.round(trustFraction * 100)} percent`}
+                  >
+                      <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#4d8b47" strokeWidth="20" strokeDasharray={`${trustArcLength} ${DONUT_CIRCUMFERENCE}`}/>
+                      <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#1f699e" strokeWidth="20" strokeDasharray={`${remainderArcLength} ${DONUT_CIRCUMFERENCE}`} strokeDashoffset={-trustArcLength}/>
                   </svg>
                   <div className="chart-label">{Math.round(trustFraction * 100)}%</div>
                 </div>
