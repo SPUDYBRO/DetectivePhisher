@@ -253,7 +253,7 @@
     --bar-chart-legend-gap: 1rem;
     --bar-chart-legend-swatch-size: 0.9rem;
     --bar-chart-details-min-height: 1.5rem;
-    
+
 }
 
 
@@ -301,6 +301,76 @@
         --results-padding: 2rem 1rem;
     }
 }
+
+/* Bar Chart Section (trust scores on the Reports page) */
+.bar-chart {
+    margin: var(--bar-chart-margin);
+    max-width: var(--bar-chart-max-width);
+}
+
+    .bar-chart-svg {
+        width: var(--bar-chart-svg-width);
+        height: var(--bar-chart-svg-height);
+    }
+
+        .chart-grid-line {
+            stroke: var(--bar-chart-grid-color);
+        }
+
+        .chart-text {
+            fill: var(--bar-chart-text-color);
+            font-size: var(--bar-chart-text-size);
+        }
+
+        /* One colour for each verdict, matching the legend */
+        .bar-benign {
+            fill: var(--bar-chart-benign-color);
+        }
+
+        .bar-caution {
+            fill: var(--bar-chart-caution-color);
+        }
+
+        .bar-malicious {
+            fill: var(--bar-chart-malicious-color);
+        }
+
+        /* Outline on hover and keyboard focus so the user can see which bar is selected */
+        .bar:hover,
+        .bar:focus {
+            outline: none;
+            stroke: var(--bar-chart-active-stroke-color);
+            stroke-width: var(--bar-chart-active-stroke-width);
+        }
+
+    .bar-chart-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--bar-chart-legend-gap);
+    }
+
+        .legend-swatch {
+            display: inline-block;
+            width: var(--bar-chart-legend-swatch-size);
+            height: var(--bar-chart-legend-swatch-size);
+        }
+
+        .legend-benign {
+            background-color: var(--bar-chart-benign-color);
+        }
+
+        .legend-caution {
+            background-color: var(--bar-chart-caution-color);
+        }
+
+        .legend-malicious {
+            background-color: var(--bar-chart-malicious-color);
+        }
+
+    /* Keeps its height when empty so the page does not jump when a bar is hovered */
+    .bar-chart-details {
+        min-height: var(--bar-chart-details-min-height);
+    }
 
 /* Layout Section */
 body {
