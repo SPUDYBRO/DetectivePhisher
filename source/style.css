@@ -234,6 +234,26 @@
     --info-page-table-cell-padding: 0.75rem;
     --info-page-table-border: 1px solid #ccc;
     --info-page-link-color: #1f699e;
+
+    /* ############################ */
+    /* Bar Chart Variable Section   */
+    /* ############################ */
+    --bar-chart-max-width: 500px;
+    --bar-chart-margin: 1.5rem 0;
+    --bar-chart-svg-width: 100%;
+    --bar-chart-svg-height: auto;
+    --bar-chart-benign-color: #4d8b47;
+    --bar-chart-caution-color: #c27c0e;
+    --bar-chart-malicious-color: #b02a37;
+    --bar-chart-grid-color: #cccccc;
+    --bar-chart-text-color: #333333;
+    --bar-chart-text-size: 12px;
+    --bar-chart-active-stroke-color: #14181d;
+    --bar-chart-active-stroke-width: 2px;
+    --bar-chart-legend-gap: 1rem;
+    --bar-chart-legend-swatch-size: 0.9rem;
+    --bar-chart-details-min-height: 1.5rem;
+    
 }
 
 
