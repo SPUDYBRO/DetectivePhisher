@@ -138,4 +138,15 @@ export default function TrustBarChart({ history }) {
           Check number (1 is the newest)
         </text>
       </svg>
+      {/* Legend explaining the bar colours */}
+      <div className="bar-chart-legend">
+        <span><span className="legend-swatch legend-benign"></span> Looks Safe</span>
+        <span><span className="legend-swatch legend-caution"></span> Use Caution</span>
+        <span><span className="legend-swatch legend-malicious"></span> Likely Phishing</span>
+      </div>
+
+      {/* Full url and result of the bar being hovered or focused, because long urls do not fit under the bars */}
+      <p className="bar-chart-details">{detailsText}</p>
     </div>
+  )
+}
