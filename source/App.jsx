@@ -74,6 +74,14 @@ export default function App() {
     setPage(pageName)
   }
 
+  // Marks the link for the page being shown so screenreaders can say "current page"
+  function currentFor(pageName) {
+    if (page === pageName) {
+      return 'page'
+    }
+    return undefined
+  }
+
   async function handleSubmit(event) {
     event.preventDefault()
 
@@ -114,11 +122,12 @@ export default function App() {
         <div id="logo">
           <h1>DetectivePhisher</h1>
         </div>
-        <div id="extra">
-          <a href="#" onClick={event => showPage(event, 'home')}>Home</a>
-          <a href="#" onClick={event => showPage(event, 'reports')}>Reports</a>
-          <a href="#" onClick={event => showPage(event, 'help')}>Help</a>
-        </div>
+        {/* nav tells screen readers this is the main menu */}
+        <nav id="extra" aria-label="Main">
+          <a href="#" aria-current={currentFor('home')} onClick={event => showPage(event, 'home')}>Home</a>
+          <a href="#" aria-current={currentFor('reports')} onClick={event => showPage(event, 'reports')}>Reports</a>
+          <a href="#" aria-current={currentFor('help')} onClick={event => showPage(event, 'help')}>Help</a>
+        </nav>
       </header>
 
       <main>
