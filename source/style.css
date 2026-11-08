@@ -75,6 +75,8 @@
     /* Header Link Variable Section */
     --header-link-color: #c5c9ce;
     --header-link-margin: 0.5rem;
+    --header-link-active-color: #fdfafa;
+    --header-link-active-decoration: underline;
 
     /* Logo Variable Section */
     --logo-font-size: 1.2rem;
@@ -456,11 +458,18 @@ header {
         padding-right: var(--extra-right-padding);
     }       
         
-        #extra, a {
-            text-decoration: none;
-            color: var(--header-link-color);
-            margin: var(--header-link-margin);
-        }
+    #extra, a {
+        text-decoration: none;
+        color: var(--header-link-color);
+        margin: var(--header-link-margin);
+    }
+
+    /* Underline the link for the page being shown */
+    a[aria-current="page"] {
+        color: var(--header-link-active-color);
+        text-decoration: var(--header-link-active-decoration);
+    }
+
 }
     
 /* Footer Section */
