@@ -69,6 +69,73 @@ export default function TrustBarChart({ history }) {
 
   return (
     <div className="bar-chart">
+      <svg
+        viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
+        className="bar-chart-svg"
+        role="group"
+        aria-label="Bar chart of the trust score for each URL checked"
+      >
+        {/* Grid lines with their numbers on the left */}
+        {ticks.map(tick => (
+          <g key={tick.value}>
+            <line
+              className="chart-grid-line"
+              x1={MARGIN_LEFT}
+              x2={CHART_WIDTH - MARGIN_RIGHT}
+              y1={tick.y}
+              y2={tick.y}
+            />
+            <text className="chart-text" x={MARGIN_LEFT - TICK_LABEL_GAP} y={tick.y} textAnchor="end" dominantBaseline="middle">
+              {tick.value}
+            </text>
+          </g>
+        ))}
+
+        {/* One bar per check. The title inside is the hover tooltip, tabIndex lets keyboard users reach it */}
+        {bars.map((bar, index) => (
+          <g key={index}>
+            <rect
+              className={`bar bar-${bar.verdict}`}
+              x={bar.x}
+              y={bar.y}
+              width={barWidth}
+              height={bar.barHeight}
+              tabIndex={0}
+              role="img"
+              aria-label={`Check ${index + 1}: ${bar.url}, trust score ${bar.trustPercent} percent`}
+              onMouseEnter={() => setSelected(index)}
+              onMouseLeave={() => setSelected(null)}
+              onFocus={() => setSelected(index)}
+              onBlur={() => setSelected(null)}
+            >
+              <title>{bar.url}: {bar.trustPercent}%</title>
+            </rect>
+            <text
+              className="chart-text"
+              x={bar.x + barWidth / 2}
+              y={MARGIN_TOP + plotHeight + BAR_LABEL_OFFSET}
+              textAnchor="middle"
+            >
+              {index + 1}
+            </text>
+          </g>
+        ))}
+
+        {/* Axis titles */}
+        <text
+          className="chart-text"
+          transform={`translate(${Y_TITLE_X} ${MARGIN_TOP + plotHeight / 2}) rotate(-90)`}
+          textAnchor="middle"
+        >
+          Trust score (%)
+        </text>
+        <text
+          className="chart-text"
+          x={MARGIN_LEFT + plotWidth / 2}
+          y={CHART_HEIGHT - X_TITLE_OFFSET}
+          textAnchor="middle"
+        >
+          Check number (1 is the newest)
+        </text>
+      </svg>
     </div>
-  )
-}
