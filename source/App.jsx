@@ -154,12 +154,11 @@ export default function App() {
   return (
     <>
       <header>
-        <div id="logo">
+        <div id="logo" role="link" onClick={event => showPage(event, 'home')}>
           <h1>DetectivePhisher</h1>
         </div>
         {/* nav tells screen readers this is the main menu */}
         <nav id="extra" aria-label="Main">
-          <a href="#" aria-current={currentFor('home')} onClick={event => showPage(event, 'home')}>Home</a>
           <a href="#" aria-current={currentFor('reports')} onClick={event => showPage(event, 'reports')}>Reports</a>
           <a href="#" aria-current={currentFor('help')} onClick={event => showPage(event, 'help')}>Help</a>
         </nav>

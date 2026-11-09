@@ -457,6 +457,7 @@ header {
         align-items: flex-end;
         padding-bottom: var(--logo-bottom-padding);
         padding-left: var(--logo-left-padding);
+        cursor: pointer;
     }
     
     /* Extra Section */
