@@ -7,6 +7,7 @@ from typing import Any
 from train import MODEL_PATH
 
 from features import FEATURE_COLUMNS
+from feature_stats import feature_zscores
 from fastapi import HTTPException
 
 
@@ -98,6 +99,7 @@ def make_prediction(model: dict,features: dict[str, float], ordered_features: li
         phishing_probability=phishing_probability,
         reasons=reasons,
         features=features,
+        feature_zscores=feature_zscores(features),
     )
 
 def build_reasons(model: DecisionTreeClassifier, row: list[float]) -> list[str]:

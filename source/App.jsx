@@ -1,7 +1,8 @@
-import {checkURL} from './api.js'
+import {checkURL, getFeatureAverages} from './api.js'
 import { useEffect,useState } from 'react'
 import HelpPage from './HelpPage.jsx'
 import ReportsPage from './ReportsPage.jsx'
+import FeatureAverageChart from './FeatureAverageChart.jsx'
 // ?raw imports the SVG file's markup as a plain string (built into Vite), so the
 // icon's currentColor stroke still picks up the status badge's text color.
 import serverStatusIcon from './icons/server-status-icon.svg?raw'
@@ -67,6 +68,7 @@ export default function App() {
   const [status, setStatus] = useState("Loading")
   const [model_state, setModelState] = useState("Loading")
   const [page, setPage] = useState('home') // Remembers which page is showing: 'home', 'reports' or 'help'
+  const [featureAverages, setFeatureAverages] = useState([])
 
   // Clamp in case the backend ever returns something outside 0-1.
   let safeFraction = 0
@@ -92,6 +94,13 @@ export default function App() {
     .then(response => response.json())
     .then(data => setModelState(data.model_state))
     .catch(() => setModelState('Failed'))
+  }, []);
+
+  // Loaded once: the legitimate/phishing feature averages used by the "Feature average" graph
+  useEffect(() => {
+    getFeatureAverages()
+    .then(setFeatureAverages)
+    .catch(() => setFeatureAverages([]))
   }, []);
 
   // Changes the page and stops the link from reloading the browser
@@ -247,12 +256,42 @@ export default function App() {
 
                 <div className="result-card" id="reasonsCard">
                   <h4>Report</h4>
-                  <ul>
-                    {/* The backend sends "reasons", not "report". React prints these as plain text. */}
+                  <p className="reasons-disclaimer">This identifies what influenced the model to make its decision.</p>
+                  <p className="reasons-note">Please understand that these are only the top features that influenced it. These may not show an exact distribution of influence.</p>
+                  <ul className="reasons-list">
+                    {/* The backend sends "reasons", not "report". Each one gets its own box to match the report's design. */}
                     {result.reasons.map((reason, index) => (
-                      <li key={index}>{reason}</li>
+                      <li key={index} className="reason-box">{reason}</li>
                     ))}
                   </ul>
+                  <p className="chart-caption">The suspicion was:</p>
+                  <div className="chart-legend">
+                    <span className={result.verdict === 'legitimate' ? 'reason-verdict-active' : 'reason-verdict-inactive'}>
+                      <span className="legend-swatch legend-legitimate"></span> Legitimate
+                    </span>
+                    <span className={result.verdict === 'phishing' ? 'reason-verdict-active' : 'reason-verdict-inactive'}>
+                      <span className="legend-swatch legend-phishing"></span> Phishing
+                    </span>
+                  </div>
+                </div>
+
+                <div className="result-card" id="featureAverageCard">
+                  <h4>Feature average of URL against legitimate and phishing</h4>
+                  <FeatureAverageChart points={featureAverages} yourValues={result.feature_zscores} />
+                </div>
+
+                <div className="result-card" id="historyCard">
+                  <h4>History</h4>
+                  <p className="chart-caption">You last viewed links in this browser session</p>
+                  <p className="history-hint">(refreshing will clear)</p>
+                  <ul className="history-list">
+                    {history.map((entry, index) => (
+                      <li key={index} className="history-item" title={entry.url}>{entry.url}</li>
+                    ))}
+                  </ul>
+                  {history.length >= MAX_HISTORY_ENTRIES && (
+                    <p className="history-limit-note">You've reached the maximum amount of history</p>
+                  )}
                 </div>
               </div>
             </div>

@@ -31,6 +31,28 @@ class PredictResponse(BaseModel):
     features: dict[str, float] = Field(
         description="All the features the model was given, used for graph"
     )
+    feature_zscores: dict[str, float] = Field(
+        description="This URL's features scaled onto the same axis as /api/feature-averages, used by the feature average graph"
+    )
+
+class FeatureAveragePoint(BaseModel):
+    key: str = Field(
+        description="The feature name, matching the keys in PredictResponse.features"
+    )
+    label: str = Field(
+        description="A human readable label for the feature, used as the graph's x-axis tick"
+    )
+    legitimate: float = Field(
+        description="The average value of this feature across legitimate URLs, scaled to a z-score"
+    )
+    phishing: float = Field(
+        description="The average value of this feature across phishing URLs, scaled to a z-score"
+    )
+
+class FeatureAverageResponse(BaseModel):
+    features: list[FeatureAveragePoint] = Field(
+        description="One point per feature, in model order, for the feature average graph"
+    )
 
 class HealthResponse(BaseModel):
     status: Literal["online"] = Field(

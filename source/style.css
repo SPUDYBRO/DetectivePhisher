@@ -160,8 +160,8 @@
     --verdict-banner-headline-font-size: 1.75rem;
     --verdict-banner-headline-margin: 0 0 1.5rem 0;
     --verdict-banner-grid-gap: 1.5rem;
-    --verdict-banner-grid-template-columns: 1fr 1fr;
-    --verdict-banner-grid-areas: "probability confidence" ". reasons";
+    --verdict-banner-grid-template-columns: 1fr 1fr 1fr;
+    --verdict-banner-grid-areas: "probability confidence reasons" "features features history";
 
     /* One background/border colour pair per verdict, reusing the bar chart's benign/malicious colours */
     --verdict-banner-legitimate-background-color: #dcecd9;
@@ -191,25 +191,32 @@
 
     /* ###################### */
     /* Results Report Section */
+    /* (the Report card's      */
+    /* disclaimer text and the */
+    /* boxed reason list)      */
     /* ###################### */
-    
+    --reasons-disclaimer-color: #333;
+    --reasons-disclaimer-margin: 0.5rem 0 0 0;
+    --reasons-disclaimer-font-size: 0.95rem;
+    --reasons-note-color: #666;
+    --reasons-note-margin: 0.5rem 0 1rem 0;
+    --reasons-note-font-size: 0.8rem;
+
     /* Results Report UL Section */
     --results-report-ul-padding: 0;
     --results-report-ul-margin: 0;
     --results-report-ul-gap: 0.75rem;
-    
-    /* Results Report LI Section */
-    --results-report-li-color: #333;
-    --results-report-li-font-size: 0.95rem;
-    --results-report-li-line-height: 1.5;
-    --results-report-li-padding-left: 1.2rem;
 
-    /* Results Report LI Before Section */
-    --results-report-li-before-position: absolute;
-    --results-report-li-before-content: "•";
-    --results-report-li-before-left: 0;
-    --results-report-li-before-color: #000;
-    --results-report-li-before-font-weight: bold;
+    /* Each reason gets its own bordered box, using the same colour as the current verdict */
+    --reason-box-background-color: #ffffff;
+    --reason-box-border-width: 1px;
+    --reason-box-border-radius: 0.3rem;
+    --reason-box-padding: 0.6rem 0.75rem;
+    --reason-box-color: #333;
+    --reason-box-font-size: 0.9rem;
+
+    /* Dims whichever "suspicion was" legend entry doesn't match the verdict */
+    --reason-verdict-inactive-opacity: 0.35;
 
     /* ############################ */
     /* Donut Chart Section            */
@@ -276,6 +283,46 @@
     --bar-chart-legend-gap: 1rem;
     --bar-chart-legend-swatch-size: 0.9rem;
     --bar-chart-details-min-height: 1.5rem;
+
+    /* ############################ */
+    /* Feature Average Chart Section */
+    /* (the line chart comparing a   */
+    /* URL's features to the         */
+    /* legitimate/phishing averages) */
+    /* ############################ */
+    --feature-average-chart-margin: 1rem 0;
+    --feature-average-chart-svg-width: 100%;
+    --feature-average-chart-svg-height: auto;
+    --feature-average-grid-color: #cccccc;
+    --feature-average-text-color: #333333;
+    --feature-average-text-size: 11px;
+    --feature-average-legitimate-color: var(--bar-chart-benign-color);
+    --feature-average-phishing-color: var(--bar-chart-malicious-color);
+    --feature-average-your-url-color: #2a4fb0;
+    --feature-average-line-width: 2px;
+    --feature-average-legend-gap: 1rem;
+    --feature-average-legend-swatch-size: 0.9rem;
+
+    /* ############################ */
+    /* History Card Section          */
+    /* (list of urls checked this    */
+    /* browser session)              */
+    /* ############################ */
+    --history-hint-color: #666;
+    --history-hint-font-size: 0.8rem;
+    --history-hint-margin: 0 0 1rem 0;
+    --history-list-gap: 0.6rem;
+    --history-list-padding: 0;
+    --history-list-margin: 0;
+    --history-list-max-height: 60vh;
+    --history-item-background-color: #ffffff;
+    --history-item-border: 1px solid #d7d7d7;
+    --history-item-border-radius: 0.3rem;
+    --history-item-padding: 0.5rem 0.75rem;
+    --history-item-font-size: 0.85rem;
+    --history-limit-note-color: #666;
+    --history-limit-note-font-size: 0.8rem;
+    --history-limit-note-margin: 1rem 0 0 0;
 
     /* Focus Variable Section */
     --focus-outline-width: 0.15rem;
@@ -610,7 +657,7 @@ footer {
         grid-template-areas: var(--verdict-banner-grid-areas);
     }
 
-        /* Placed via the grid areas above: probability/confidence on top, report bottom right */
+        /* Placed via the grid areas above: probability/confidence/report on top, feature chart and history below */
         #probabilityCard {
             grid-area: probability;
         }
@@ -621,6 +668,14 @@ footer {
 
         #reasonsCard {
             grid-area: reasons;
+        }
+
+        #featureAverageCard {
+            grid-area: features;
+        }
+
+        #historyCard {
+            grid-area: history;
         }
 }
 
@@ -652,12 +707,24 @@ footer {
     }
 }
 
-/* The report card keeps its reasons list left-aligned even though the card itself is centred.
-   Only its list scrolls if it grows long, so the fixed-size donut/gauge cards never show a scrollbar. */
+/* The report card keeps its text left-aligned even though the card itself is centred.
+   Only its reasons list scrolls if it grows long, so the fixed-size donut/gauge cards never show a scrollbar. */
 #reasonsCard {
     text-align: left;
 
-    ul {
+    .reasons-disclaimer {
+        color: var(--reasons-disclaimer-color);
+        margin: var(--reasons-disclaimer-margin);
+        font-size: var(--reasons-disclaimer-font-size);
+    }
+
+    .reasons-note {
+        color: var(--reasons-note-color);
+        margin: var(--reasons-note-margin);
+        font-size: var(--reasons-note-font-size);
+    }
+
+    .reasons-list {
         display: flex;
         list-style: none;
         flex-direction: column;
@@ -669,24 +736,33 @@ footer {
         max-height: var(--result-card-max-height);
     }
 
-    li {
-        position: relative;
+    /* Each reason is its own box, outlined in the current verdict's colour */
+    .reason-box {
+        text-align: center;
 
-        color: var(--results-report-li-color);
-        font-size: var(--results-report-li-font-size);
-        line-height: var(--results-report-li-line-height);
-        padding-left: var(--results-report-li-padding-left);
+        background-color: var(--reason-box-background-color);
+        border-width: var(--reason-box-border-width);
+        border-style: solid;
+        border-radius: var(--reason-box-border-radius);
+        padding: var(--reason-box-padding);
+        color: var(--reason-box-color);
+        font-size: var(--reason-box-font-size);
     }
 
-    li:before {
-        position: absolute;
-
-        left: var(--results-report-li-before-left);
-        color: var(--results-report-li-before-color);
-        content: var(--results-report-li-before-content);
-        font-weight: var(--results-report-li-before-font-weight);
+    /* Dims whichever "suspicion was" legend entry doesn't match the verdict */
+    .reason-verdict-inactive {
+        opacity: var(--reason-verdict-inactive-opacity);
     }
 }
+
+    /* One reason-box border colour per verdict, matching the surrounding banner */
+    .verdict-banner-legitimate .reason-box {
+        border-color: var(--verdict-banner-legitimate-border-color);
+    }
+
+    .verdict-banner-phishing .reason-box {
+        border-color: var(--verdict-banner-phishing-border-color);
+    }
 
 /* Caption and legend shared by the donut and gauge charts */
 .chart-caption {
@@ -829,11 +905,11 @@ footer {
     background-color: var(--url-form-button-background-color);
 }
 
-/* On narrow screens the result cards stack in one column instead of two */
+/* On narrow screens all five result cards stack in one column instead of a grid */
 @media (max-width: 700px) {
     :root {
         --verdict-banner-grid-template-columns: 1fr;
-        --verdict-banner-grid-areas: "probability" "confidence" "reasons";
+        --verdict-banner-grid-areas: "probability" "confidence" "reasons" "features" "history";
         --results-padding: 2rem 1rem;
     }
 }
@@ -901,6 +977,101 @@ footer {
     .bar-chart-details {
         min-height: var(--bar-chart-details-min-height);
     }
+
+/* Feature Average Chart Section (comparison graph on the Report banner) */
+.feature-average-chart {
+    margin: var(--feature-average-chart-margin);
+}
+
+    .feature-average-svg {
+        width: var(--feature-average-chart-svg-width);
+        height: var(--feature-average-chart-svg-height);
+    }
+
+        .feature-average-chart .chart-grid-line {
+            stroke: var(--feature-average-grid-color);
+        }
+
+        .feature-average-chart .chart-text {
+            fill: var(--feature-average-text-color);
+            font-size: var(--feature-average-text-size);
+        }
+
+        .feature-average-tick-label {
+            text-anchor: end;
+        }
+
+        /* One colour per line, matching the legend below the chart */
+        .feature-average-line-legitimate {
+            stroke: var(--feature-average-legitimate-color);
+            stroke-width: var(--feature-average-line-width);
+        }
+
+        .feature-average-line-phishing {
+            stroke: var(--feature-average-phishing-color);
+            stroke-width: var(--feature-average-line-width);
+        }
+
+        .feature-average-line-your-url {
+            stroke: var(--feature-average-your-url-color);
+            stroke-width: var(--feature-average-line-width);
+        }
+
+    .feature-average-legend {
+        gap: var(--feature-average-legend-gap);
+
+        .legend-swatch {
+            width: var(--feature-average-legend-swatch-size);
+            height: var(--feature-average-legend-swatch-size);
+        }
+
+        .legend-your-url {
+            background-color: var(--feature-average-your-url-color);
+        }
+}
+
+/* History Card Section (list of urls checked this browser session) */
+#historyCard {
+    text-align: left;
+
+    .history-hint {
+        color: var(--history-hint-color);
+        font-size: var(--history-hint-font-size);
+        margin: var(--history-hint-margin);
+    }
+
+    .history-list {
+        display: flex;
+        list-style: none;
+        flex-direction: column;
+        overflow-y: auto;
+
+        gap: var(--history-list-gap);
+        padding: var(--history-list-padding);
+        margin: var(--history-list-margin);
+        max-height: var(--history-list-max-height);
+    }
+
+    .history-item {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        background-color: var(--history-item-background-color);
+        border: var(--history-item-border);
+        border-radius: var(--history-item-border-radius);
+        padding: var(--history-item-padding);
+        font-size: var(--history-item-font-size);
+    }
+
+    .history-limit-note {
+        text-align: center;
+
+        color: var(--history-limit-note-color);
+        font-size: var(--history-limit-note-font-size);
+        margin: var(--history-limit-note-margin);
+    }
+}
 
 /* Focus Section (keyboard users need to see where they are) */
 a:focus-visible,

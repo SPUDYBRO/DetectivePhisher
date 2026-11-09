@@ -1,7 +1,8 @@
 from fastapi import FastAPI
-from schemas import PredictRequest, PredictResponse, HealthResponse
+from schemas import PredictRequest, PredictResponse, HealthResponse, FeatureAverageResponse
 from validation import validate_url
 from features import extract_features, features_dict_to_ordered_list
+from feature_stats import feature_average_chart_points
 from prediction import make_prediction
 from train import MODEL_PATH
 import logging
@@ -111,6 +112,11 @@ def predict(data: PredictRequest):
     ordered_features = features_dict_to_ordered_list(features)
 
     return make_prediction(model, features, ordered_features)
+
+
+@app.get("/api/feature-averages", response_model=FeatureAverageResponse, summary="Feature averages for the comparison graph", description="Returns the average value of each feature for legitimate and phishing URLs, scaled so they can be plotted alongside a single checked URL")
+def feature_averages():
+    return FeatureAverageResponse(features=feature_average_chart_points())
 
 
 worker = threading.Thread(target=server_prechecks, name="Trainer", daemon=True)
