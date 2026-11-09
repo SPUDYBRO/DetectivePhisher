@@ -66,9 +66,17 @@ export default function FeatureAverageChart({ points, yourValues }) {
           </g>
         ))}
 
-        <path d={legitimatePath} className="feature-average-line-legitimate" fill="none" />
-        <path d={phishingPath} className="feature-average-line-phishing" fill="none" />
-        {yourUrlPath && <path d={yourUrlPath} className="feature-average-line-your-url" fill="none" />}
+        <path d={legitimatePath} className="feature-average-line-legitimate" fill="none">
+          <title>Legitimate average</title>
+        </path>
+        <path d={phishingPath} className="feature-average-line-phishing" fill="none">
+          <title>Phishing average</title>
+        </path>
+        {yourUrlPath && (
+          <path d={yourUrlPath} className="feature-average-line-your-url" fill="none">
+            <title>Your URL</title>
+          </path>
+        )}
 
         {/* One rotated label per feature along the bottom */}
         {points.map((point, index) => (

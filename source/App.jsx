@@ -225,8 +225,12 @@ export default function App() {
                       role="img"
                       aria-label={`Legitimate probability ${Math.round(safeFraction * 100)} percent`}
                     >
-                        <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" className="donut-arc-legitimate" strokeWidth="20" strokeDasharray={`${safeArcLength} ${DONUT_CIRCUMFERENCE}`}/>
-                        <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" className="donut-arc-phishing" strokeWidth="20" strokeDasharray={`${remainderArcLength} ${DONUT_CIRCUMFERENCE}`} strokeDashoffset={-safeArcLength}/>
+                        <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" className="donut-arc-legitimate" strokeWidth="20" strokeDasharray={`${safeArcLength} ${DONUT_CIRCUMFERENCE}`}>
+                          <title>{`Legitimate: ${Math.round(safeFraction * 100)}%`}</title>
+                        </circle>
+                        <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" className="donut-arc-phishing" strokeWidth="20" strokeDasharray={`${remainderArcLength} ${DONUT_CIRCUMFERENCE}`} strokeDashoffset={-safeArcLength}>
+                          <title>{`Phishing: ${Math.round((1 - safeFraction) * 100)}%`}</title>
+                        </circle>
                     </svg>
                     <div className="chart-label">{Math.round(safeFraction * 100)}%</div>
                   </div>
@@ -249,8 +253,12 @@ export default function App() {
                       aria-label={`Confidence ${Math.round(safeConfidenceFraction * 100)} percent`}
                     >
                         <path d={GAUGE_ARC_PATH} fill="none" className="gauge-track" strokeWidth="14" strokeLinecap="round"/>
-                        <path d={GAUGE_ARC_PATH} fill="none" className="gauge-arc-confident" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${confidenceArcLength} ${GAUGE_HALF_CIRCUMFERENCE}`}/>
-                        <path d={GAUGE_ARC_PATH} fill="none" className="gauge-arc-uncertain" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${confidenceRemainderArcLength} ${GAUGE_HALF_CIRCUMFERENCE}`} strokeDashoffset={-confidenceArcLength}/>
+                        <path d={GAUGE_ARC_PATH} fill="none" className="gauge-arc-confident" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${confidenceArcLength} ${GAUGE_HALF_CIRCUMFERENCE}`}>
+                          <title>{`Confident: ${Math.round(safeConfidenceFraction * 100)}%`}</title>
+                        </path>
+                        <path d={GAUGE_ARC_PATH} fill="none" className="gauge-arc-uncertain" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${confidenceRemainderArcLength} ${GAUGE_HALF_CIRCUMFERENCE}`} strokeDashoffset={-confidenceArcLength}>
+                          <title>{`Uncertain: ${Math.round((1 - safeConfidenceFraction) * 100)}%`}</title>
+                        </path>
                     </svg>
                     <div className="gauge-label">{Math.round(safeConfidenceFraction * 100)}%</div>
                   </div>

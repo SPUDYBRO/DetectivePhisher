@@ -233,7 +233,7 @@
     --donut-chart-label-top: 50%;
     --donut-chart-label-left: 50%;
     --donut-chart-label-transform: translate(-50%, -50%);
-    --donut-chart-label-font-size: 2rem;
+    --donut-chart-label-font-size: clamp(0.75rem, 15cqw, 1.5rem);
     --donut-chart-label-color: #222121;
     --donut-chart-label-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
@@ -250,7 +250,7 @@
     --gauge-label-top: 85%;
     --gauge-label-left: 50%;
     --gauge-label-transform: translate(-50%, -50%);
-    --gauge-label-font-size: 2rem;
+    --gauge-label-font-size: clamp(0.75rem, 12cqw, 1.5rem);
     --gauge-label-color: #222121;
     --confidence-disclaimer-color: #666;
     --confidence-disclaimer-font-size: 0.85rem;
@@ -783,6 +783,9 @@ footer {
 /* Donut Chart (Phishing Probability card) */
 .donut-chart {
     position: relative;
+    /* Makes this element a size container so the label's cqw units
+       resolve against the chart's width rather than the viewport */
+    container-type: inline-size;
 
     width: var(--donut-chart-width);
     height: var(--donut-chart-height);
@@ -825,6 +828,7 @@ footer {
 
 .gauge-chart {
     position: relative;
+    container-type: inline-size;
 
     width: var(--gauge-chart-width);
     aspect-ratio: var(--gauge-chart-aspect-ratio);
@@ -904,15 +908,6 @@ footer {
     padding: var(--url-form-button-padding);
     font-size: var(--url-form-button-font-size);
     background-color: var(--url-form-button-background-color);
-}
-
-/* On narrow screens all five result cards stack in one column instead of a grid */
-@media (max-width: 700px) {
-    :root {
-        --verdict-banner-grid-template-columns: 1fr;
-        --verdict-banner-grid-areas: "probability" "confidence" "reasons" "features" "history";
-        --results-padding: 2rem 1rem;
-    }
 }
 
 /* Bar Chart Section (trust scores on the Reports page) */
@@ -1213,3 +1208,18 @@ button:focus-visible {
             transform: scale(1.2);
         }
     }
+
+
+
+/* ####################### */
+/* #### Media Queries #### */
+/* ####################### */
+
+/* On narrow screens all five result cards stack in one column instead of a grid */
+@media (max-width: 700px) {
+    :root {
+        --verdict-banner-grid-template-columns: 1fr;
+        --verdict-banner-grid-areas: "probability" "confidence" "reasons" "features" "history";
+        --results-padding: 2rem 1rem;
+    }
+}
