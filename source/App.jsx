@@ -8,6 +8,14 @@ const VERDICT_LABELS = {
   phishing: "Likely phishing"
 }
 
+// Maps the AI model's semantic state to the same online/offline/loading
+// CSS classes the server status badge uses, so "Ready" renders green.
+const MODEL_STATE_CLASS = {
+  Ready: "ready",
+  Loading: "loading",
+  Failed: "failed"
+}
+
 const MAX_HISTORY_ENTRIES = 10
 
 // Radius is kept small enough (r + strokeWidth / 2 <= 50) that the ring stays inside the 100x100 viewBox.
@@ -56,6 +64,7 @@ export default function App() {
   const [error, setError] = useState('')
   const [notice, setNotice] = useState ('') //Holds the message telling the user we assumed http://
   const [status, setStatus] = useState("Loading")
+  const [model_state, setModelState] = useState("Loading")
   const [page, setPage] = useState('home') // Remembers which page is showing: 'home', 'reports' or 'help'
 
   // Clamp in case the backend ever returns something outside 0-1.
@@ -71,6 +80,13 @@ export default function App() {
     .then(response => response.json())
     .then(data => setStatus(data.status))
     .catch(() => setStatus('offline'))
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/health")
+    .then(response => response.json())
+    .then(data => setModelState(data.model_state))
+    .catch(() => setModelState('Failed'))
   }, []);
 
   // Changes the page and stops the link from reloading the browser
@@ -253,10 +269,34 @@ export default function App() {
         {/*class is reserved word in React, so we use className instead*/}
         <div id="statusBoxes">
           <output className={`server-status-box ${status}`} title='The connection to the server'>
-            <p>{status}</p>
+            <p>
+              <svg className="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="2" y="1" width="20" height="6" rx="1.5" ry="1.5"></rect>
+                <rect x="2" y="9" width="20" height="6" rx="1.5" ry="1.5"></rect>
+                <rect x="2" y="17" width="20" height="6" rx="1.5" ry="1.5"></rect>
+                <line x1="6" y1="4" x2="6.01" y2="4"></line>
+                <line x1="6" y1="12" x2="6.01" y2="12"></line>
+                <line x1="6" y1="20" x2="6.01" y2="20"></line>
+              </svg>
+              {status}
+            </p>
           </output>
-          <output className={`model-status-box ${status}`} title='The loading status of the AI Model'>
-            <p>{status}</p>
+          <output className={`model-status-box ${MODEL_STATE_CLASS[model_state] ?? 'loading'}`} title='The loading status of the AI Model'>
+            <p>
+              <svg className="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                <rect x="9" y="9" width="6" height="6"></rect>
+                <line x1="9" y1="1" x2="9" y2="4"></line>
+                <line x1="15" y1="1" x2="15" y2="4"></line>
+                <line x1="9" y1="20" x2="9" y2="23"></line>
+                <line x1="15" y1="20" x2="15" y2="23"></line>
+                <line x1="20" y1="9" x2="23" y2="9"></line>
+                <line x1="20" y1="14" x2="23" y2="14"></line>
+                <line x1="1" y1="9" x2="4" y2="9"></line>
+                <line x1="1" y1="14" x2="4" y2="14"></line>
+              </svg>
+              {model_state}
+            </p>
           </output>
         </div>
         
