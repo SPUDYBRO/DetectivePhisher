@@ -82,18 +82,26 @@ export default function App() {
   const confidenceArcLength = safeConfidenceFraction * GAUGE_HALF_CIRCUMFERENCE
   const confidenceRemainderArcLength = GAUGE_HALF_CIRCUMFERENCE - confidenceArcLength
 
+  // Both the health fetch and a short timer run in parallel, and the badge only
+  // updates once both finish, so "Loading" is visible for at least this long.
+  const MIN_STATUS_LOADING_MS = 1500
+
   useEffect(() => {
-    fetch("/api/health")
-    .then(response => response.json())
-    .then(data => setStatus(data.status))
-    .catch(() => setStatus('offline'))
+    const minimumWait = new Promise(resolve => setTimeout(resolve, MIN_STATUS_LOADING_MS))
+    const healthCheck = fetch("/api/health").then(response => response.json())
+
+    Promise.all([healthCheck, minimumWait])
+    .then(([data]) => setStatus(data.status))
+    .catch(() => minimumWait.then(() => setStatus('offline')))
   }, []);
 
   useEffect(() => {
-    fetch("/api/health")
-    .then(response => response.json())
-    .then(data => setModelState(data.model_state))
-    .catch(() => setModelState('Failed'))
+    const minimumWait = new Promise(resolve => setTimeout(resolve, MIN_STATUS_LOADING_MS))
+    const healthCheck = fetch("/api/health").then(response => response.json())
+
+    Promise.all([healthCheck, minimumWait])
+    .then(([data]) => setModelState(data.model_state))
+    .catch(() => minimumWait.then(() => setModelState('Failed')))
   }, []);
 
   // Loaded once: the legitimate/phishing feature averages used by the "Feature average" graph
