@@ -833,8 +833,7 @@ button:focus-visible {
     padding: var(--status-badge-padding);
     
     display: flex;
-    align-items: center;
-    justify-content: center;
+    justify-content: left;
     gap: var(--status-badge-gap);
     
     border: var(--status-badge-border);
