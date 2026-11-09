@@ -2,6 +2,10 @@ import {checkURL} from './api.js'
 import { useEffect,useState } from 'react'
 import HelpPage from './HelpPage.jsx'
 import ReportsPage from './ReportsPage.jsx'
+// ?raw imports the SVG file's markup as a plain string (built into Vite), so the
+// icon's currentColor stroke still picks up the status badge's text color.
+import serverStatusIcon from './icons/server-status-icon.svg?raw'
+import aiModelStatusIcon from './icons/ai-model-status-icon.svg?raw'
 
 const VERDICT_LABELS = {
   legitimate: "Looks safe",
@@ -271,31 +275,13 @@ export default function App() {
         <div id="statusBoxes">
           <output className={`server-status-box ${status}`} title='The connection to the server'>
             <p>
-              <svg className="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <rect x="2" y="1" width="20" height="6" rx="1.5" ry="1.5"></rect>
-                <rect x="2" y="9" width="20" height="6" rx="1.5" ry="1.5"></rect>
-                <rect x="2" y="17" width="20" height="6" rx="1.5" ry="1.5"></rect>
-                <line x1="6" y1="4" x2="6.01" y2="4"></line>
-                <line x1="6" y1="12" x2="6.01" y2="12"></line>
-                <line x1="6" y1="20" x2="6.01" y2="20"></line>
-              </svg>
+              <span style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: serverStatusIcon }} />
               {status}
             </p>
           </output>
           <output className={`model-status-box ${MODEL_STATE_CLASS[model_state] ?? 'loading'}`} title='The loading status of the AI Model'>
             <p>
-              <svg className="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
-                <rect x="9" y="9" width="6" height="6"></rect>
-                <line x1="9" y1="1" x2="9" y2="4"></line>
-                <line x1="15" y1="1" x2="15" y2="4"></line>
-                <line x1="9" y1="20" x2="9" y2="23"></line>
-                <line x1="15" y1="20" x2="15" y2="23"></line>
-                <line x1="20" y1="9" x2="23" y2="9"></line>
-                <line x1="20" y1="14" x2="23" y2="14"></line>
-                <line x1="1" y1="9" x2="4" y2="9"></line>
-                <line x1="1" y1="14" x2="4" y2="14"></line>
-              </svg>
+              <span style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: aiModelStatusIcon }} />
               {model_state}
             </p>
           </output>
