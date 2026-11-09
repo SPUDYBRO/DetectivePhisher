@@ -262,124 +262,58 @@
     --focus-outline-offset: 0.2rem;
     --header-focus-outline-color: #fdfafa;
 
+    /* #################### */
+    /* Status Badge Section */
+    /* #################### */
+
+    /* Status Badge Box Section */
+    --status-badge-height: 20px;
+    --status-badge-width: auto;
+    --status-badge-padding: 0 1.25rem;
+    --status-badge-gap: 0.75rem;
+    --status-badge-border: 2px solid rgba(255, 255, 255, 0.3);
+    --status-badge-border-radius: 0.2rem;
+    --status-badge-background-color: rgba(255, 255, 255, 0.12);
+    --status-badge-backdrop-blur: blur(8px);
+    --status-badge-text-color: #ffffff;
+    --status-badge-font-weight: 600;
+    --status-badge-font-size: 0.8rem;
+    --status-badge-letter-spacing: 0.4px;
+    --status-badge-transition: all 0.3s ease;
+    --status-badge-z-index: 10;
+
+    /* Status Badge Text (p) Section */
+    --status-badge-text-gap: 0.5rem;
+
+    /* Status Badge Icon Section */
+    --status-icon-size: 14px;
+    --status-icon-default-glow: drop-shadow(0 0 8px rgba(250, 204, 21, 0.6));
+    --status-icon-pulse-animation: pulse 1.5s ease-in-out infinite;
+    --status-icon-static-animation: none;
+
+    /* Status Badge Loading State Section */
+    --status-badge-loading-background-color: rgba(250, 204, 21, 0.15);
+    --status-badge-loading-border-color: rgba(250, 204, 21, 0.3);
+    --status-badge-loading-backdrop-blur: blur(10px);
+    --status-icon-loading-glow: drop-shadow(0 0 8px rgba(250, 204, 21, 0.8));
+    --status-badge-loading-text-color: #fbbf24;
+
+    /* Status Badge Online State Section */
+    --status-badge-online-background-color: rgba(34, 197, 94, 0.15);
+    --status-badge-online-border-color: rgba(34, 197, 94, 0.3);
+    --status-badge-online-backdrop-blur: blur(10px);
+    --status-icon-online-glow: drop-shadow(0 0 12px rgba(34, 197, 94, 0.8));
+    --status-badge-online-text-color: #86efac;
+
+    /* Status Badge Offline State Section */
+    --status-badge-offline-background-color: rgba(239, 68, 68, 0.15);
+    --status-badge-offline-border-color: rgba(239, 68, 68, 0.3);
+    --status-badge-offline-backdrop-blur: blur(10px);
+    --status-icon-offline-glow: drop-shadow(0 0 12px rgba(239, 68, 68, 0.8));
+    --status-badge-offline-text-color: #fca5a5;
 }
 
 
-/* Keeps the text in a readable column in the middle of the page */
-.info-page {
-    box-sizing: border-box;
-    margin: 0 auto;
-    max-width: var(--info-page-max-width);
-    padding: var(--info-page-padding);
-}
-
-/* Table of past checks on the reports page */
-.reports-table {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-/* break-all stops a long url from pushing the table off the screen on a phone */
-.reports-table th,
-.reports-table td {
-    border: var(--info-page-table-border);
-    padding: var(--info-page-table-cell-padding);
-    text-align: left;
-    word-break: break-all;
-}
-
-/* Link and button used on the 404 and error pages */
-.info-page-link {
-    color: var(--info-page-link-color);
-}
-
-.info-page-button {
-    border: none;
-    cursor: pointer;
-    color: var(--url-form-button-color);
-    padding: var(--url-form-button-padding);
-    font-size: var(--url-form-button-font-size);
-    background-color: var(--url-form-button-background-color);
-}
-
-/* On narrow screens the results stack in one colum instead of three */
-@media (max-width: 700px) {
-    :root {
-        --results-grid-template-columns: 1fr;
-        --results-padding: 2rem 1rem;
-    }
-}
-
-/* Bar Chart Section (trust scores on the Reports page) */
-.bar-chart {
-    margin: var(--bar-chart-margin);
-    max-width: var(--bar-chart-max-width);
-}
-
-    .bar-chart-svg {
-        width: var(--bar-chart-svg-width);
-        height: var(--bar-chart-svg-height);
-    }
-
-        .chart-grid-line {
-            stroke: var(--bar-chart-grid-color);
-        }
-
-        .chart-text {
-            fill: var(--bar-chart-text-color);
-            font-size: var(--bar-chart-text-size);
-        }
-
-        /* One colour for each verdict, matching the legend */
-        .bar-legitimate {
-            fill: var(--bar-chart-benign-color);
-        }
-
-
-        .bar-phishing {
-            fill: var(--bar-chart-malicious-color);
-        }
-
-        /* Outline on hover and keyboard focus so the user can see which bar is selected */
-        .bar:hover,
-        .bar:focus {
-            outline: none;
-            stroke: var(--bar-chart-active-stroke-color);
-            stroke-width: var(--bar-chart-active-stroke-width);
-        }
-
-    .bar-chart-legend {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--bar-chart-legend-gap);
-    }
-
-        .legend-swatch {
-            display: inline-block;
-            width: var(--bar-chart-legend-swatch-size);
-            height: var(--bar-chart-legend-swatch-size);
-        }
-
-        .legend-legitimate {
-            background-color: var(--bar-chart-benign-color);
-        }
-
-
-        .legend-phishing {
-            background-color: var(--bar-chart-malicious-color);
-        }
-
-    /* Keeps its height when empty so the page does not jump when a bar is hovered */
-    .bar-chart-details {
-        min-height: var(--bar-chart-details-min-height);
-    }
-
-/* Focus Section (keyboard users need to see where they are) */
-a:focus-visible,
-button:focus-visible {
-    outline: var(--focus-outline-width) solid var(--focus-outline-color);
-    outline-offset: var(--focus-outline-offset);
-}
 
 /* Layout Section */
 body {
@@ -771,45 +705,154 @@ footer {
     }
 }
 
+/* Keeps the text in a readable column in the middle of the page */
+.info-page {
+    box-sizing: border-box;
+    margin: 0 auto;
+    max-width: var(--info-page-max-width);
+    padding: var(--info-page-padding);
+}
+
+/* Table of past checks on the reports page */
+.reports-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+/* break-all stops a long url from pushing the table off the screen on a phone */
+.reports-table th,
+.reports-table td {
+    border: var(--info-page-table-border);
+    padding: var(--info-page-table-cell-padding);
+    text-align: left;
+    word-break: break-all;
+}
+
+/* Link and button used on the 404 and error pages */
+.info-page-link {
+    color: var(--info-page-link-color);
+}
+
+.info-page-button {
+    border: none;
+    cursor: pointer;
+    color: var(--url-form-button-color);
+    padding: var(--url-form-button-padding);
+    font-size: var(--url-form-button-font-size);
+    background-color: var(--url-form-button-background-color);
+}
+
+/* On narrow screens the results stack in one colum instead of three */
+@media (max-width: 700px) {
+    :root {
+        --results-grid-template-columns: 1fr;
+        --results-padding: 2rem 1rem;
+    }
+}
+
+/* Bar Chart Section (trust scores on the Reports page) */
+.bar-chart {
+    margin: var(--bar-chart-margin);
+    max-width: var(--bar-chart-max-width);
+}
+
+    .bar-chart-svg {
+        width: var(--bar-chart-svg-width);
+        height: var(--bar-chart-svg-height);
+    }
+
+        .chart-grid-line {
+            stroke: var(--bar-chart-grid-color);
+        }
+
+        .chart-text {
+            fill: var(--bar-chart-text-color);
+            font-size: var(--bar-chart-text-size);
+        }
+
+        /* One colour for each verdict, matching the legend */
+        .bar-legitimate {
+            fill: var(--bar-chart-benign-color);
+        }
+
+
+        .bar-phishing {
+            fill: var(--bar-chart-malicious-color);
+        }
+
+        /* Outline on hover and keyboard focus so the user can see which bar is selected */
+        .bar:hover,
+        .bar:focus {
+            outline: none;
+            stroke: var(--bar-chart-active-stroke-color);
+            stroke-width: var(--bar-chart-active-stroke-width);
+        }
+
+    .bar-chart-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--bar-chart-legend-gap);
+    }
+
+        .legend-swatch {
+            display: inline-block;
+            width: var(--bar-chart-legend-swatch-size);
+            height: var(--bar-chart-legend-swatch-size);
+        }
+
+        .legend-legitimate {
+            background-color: var(--bar-chart-benign-color);
+        }
+
+
+        .legend-phishing {
+            background-color: var(--bar-chart-malicious-color);
+        }
+
+    /* Keeps its height when empty so the page does not jump when a bar is hovered */
+    .bar-chart-details {
+        min-height: var(--bar-chart-details-min-height);
+    }
+
+/* Focus Section (keyboard users need to see where they are) */
+a:focus-visible,
+button:focus-visible {
+    outline: var(--focus-outline-width) solid var(--focus-outline-color);
+    outline-offset: var(--focus-outline-offset);
+}
 
 
 
-
-
-
-
-
-/* Status Box Selection */
-/* Status box down below */
+/* Status Box Section */
 .server-status-box, 
 .model-status-box {
     position: static;
     
-    height: 20px;
-    width: auto;
-    padding: 0 1.25rem;
+    height: var(--status-badge-height);
+    width: var(--status-badge-width);
+    padding: var(--status-badge-padding);
     
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    gap: var(--status-badge-gap);
     
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 0.2rem;
+    border: var(--status-badge-border);
+    border-radius: var(--status-badge-border-radius);
     
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: var(--status-badge-background-color);
+    backdrop-filter: var(--status-badge-backdrop-blur);
+    -webkit-backdrop-filter: var(--status-badge-backdrop-blur);
     
-    color: white;
-    font-weight: 600;
-    font-size: 0.8rem;
+    color: var(--status-badge-text-color);
+    font-weight: var(--status-badge-font-weight);
+    font-size: var(--status-badge-font-size);
     text-transform: uppercase;
-    letter-spacing: 0.4px;
+    letter-spacing: var(--status-badge-letter-spacing);
     
     box-shadow: none;
-    transition: all 0.3s ease;
-    z-index: 10;
+    transition: var(--status-badge-transition);
+    z-index: var(--status-badge-z-index);
     
     animation: none;
 }
@@ -820,74 +863,74 @@ footer {
         flex-shrink: 0;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--status-badge-text-gap);
     }
 
     /* Server status uses an icon instead of the plain square indicator */
     .server-status-box .status-icon,
     .model-status-box .status-icon {
-        width: 14px;
-        height: 14px;
+        width: var(--status-icon-size);
+        height: var(--status-icon-size);
         flex-shrink: 0;
-        filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.6));
-        animation: pulse 1.5s ease-in-out infinite;
+        filter: var(--status-icon-default-glow);
+        animation: var(--status-icon-pulse-animation);
     }
 
     /* Loading state - Yellow indicator with animation */
     .server-status-box.loading,
     .model-status-box.loading {
-        background: rgba(250, 204, 21, 0.15);
-        border-color: rgba(250, 204, 21, 0.3);
-        backdrop-filter: blur(10px);
+        background: var(--status-badge-loading-background-color);
+        border-color: var(--status-badge-loading-border-color);
+        backdrop-filter: var(--status-badge-loading-backdrop-blur);
     }
 
     .server-status-box.loading .status-icon,
     .model-status-box.loading .status-icon {
-        filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.8));
-        animation: pulse 1.5s ease-in-out infinite;
+        filter: var(--status-icon-loading-glow);
+        animation: var(--status-icon-pulse-animation);
     }
 
     .server-status-box.loading p,
     .model-status-box.loading p {
-        color: #fbbf24;
+        color: var(--status-badge-loading-text-color);
     }
 
-    /* Online state - Green indicator */
+    /* Online / Ready state - Green indicator */
     .server-status-box.online,
     .model-status-box.ready {
-        background: rgba(34, 197, 94, 0.15);
-        border-color: rgba(34, 197, 94, 0.3);
-        backdrop-filter: blur(10px);
+        background: var(--status-badge-online-background-color);
+        border-color: var(--status-badge-online-border-color);
+        backdrop-filter: var(--status-badge-online-backdrop-blur);
     }
 
     .server-status-box.online .status-icon,
     .model-status-box.ready .status-icon {
-        filter: drop-shadow(0 0 12px rgba(34, 197, 94, 0.8));
-        animation: none;
+        filter: var(--status-icon-online-glow);
+        animation: var(--status-icon-static-animation);
     }
 
     .server-status-box.online p,
     .model-status-box.ready p {
-        color: #86efac;
+        color: var(--status-badge-online-text-color);
     }
 
-    /* Offline state - Red indicator */
+    /* Offline / Failed state - Red indicator */
     .server-status-box.offline,
-    .model-status-box.offline {
-        background: rgba(239, 68, 68, 0.15);
-        border-color: rgba(239, 68, 68, 0.3);
-        backdrop-filter: blur(10px);
+    .model-status-box.failed {
+        background: var(--status-badge-offline-background-color);
+        border-color: var(--status-badge-offline-border-color);
+        backdrop-filter: var(--status-badge-offline-backdrop-blur);
     }
 
     .server-status-box.offline .status-icon,
-    .model-status-box.offline .status-icon {
-        filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.8));
-        animation: none;
+    .model-status-box.failed .status-icon {
+        filter: var(--status-icon-offline-glow);
+        animation: var(--status-icon-static-animation);
     }
 
     .server-status-box.offline p,
-    .model-status-box.offline p {
-        color: #fca5a5;
+    .model-status-box.failed p {
+        color: var(--status-badge-offline-text-color);
     }
 
     @keyframes slideIn {

@@ -8,8 +8,9 @@ const VERDICT_LABELS = {
   phishing: "Likely phishing"
 }
 
-// Maps the AI model's semantic state to the same online/offline/loading
-// CSS classes the server status badge uses, so "Ready" renders green.
+// Maps the AI model's semantic state ("Ready"/"Loading"/"Failed") to its
+// own ready/loading/failed CSS classes, distinct from the server status
+// badge's online/loading/offline classes, though both share the same colors.
 const MODEL_STATE_CLASS = {
   Ready: "ready",
   Loading: "loading",
