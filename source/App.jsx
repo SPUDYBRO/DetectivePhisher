@@ -251,9 +251,15 @@ export default function App() {
         <p>&copy; 2026 DetectivePhisher</p>
         </div>
         {/*class is reserved word in React, so we use className instead*/}
-        <output className={`status-box ${status}`} title='The connection to the server'>
-          <p>{status}</p>
-        </output>
+        <div id="statusBoxes">
+          <output className={`server-status-box ${status}`} title='The connection to the server'>
+            <p>{status}</p>
+          </output>
+          <output className={`model-status-box ${status}`} title='The loading status of the AI Model'>
+            <p>{status}</p>
+          </output>
+        </div>
+        
       </footer>
     </>
   )
