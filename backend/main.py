@@ -1,18 +1,103 @@
 from fastapi import FastAPI
 from schemas import PredictRequest, PredictResponse, HealthResponse
 from validation import validate_url
-from features import extract_features, features_dict_to_ordered_list, FEATURE_COLUMNS
+from features import extract_features, features_dict_to_ordered_list
 from prediction import make_prediction
 from train import MODEL_PATH
+import logging
+from train import main as train
+import joblib
+import threading
 
 
 app = FastAPI(title="DetectivePhisher API")
 
+model = {
+    "state": "Loading",
+    "model": None,
+    "message": "Currently loading the model",
+}
 
 
-@app.get("/api/health", response_model=HealthResponse, summary="Front-end connectivity check", description="Used by the front-end to identify if it is able to connect to the server or not")
+
+
+def server_prechecks():
+    """Runs essential checks when the server launches
+    Checks include:
+    - Checks if A model is pre-trained
+    - Will train a new model if no model was pretrained
+    - Loads The model
+    """
+    logger = logging.getLogger("uvicorn.error")
+    if MODEL_PATH.is_file():
+        logger.info("AI Model already exists, Loading...")
+        model["state"] = "Loading"
+        model["message"] = "Currently loading the model"
+        
+        
+    else:
+        logger.warning("No Model was pre-trained. Running Trainer...")
+        
+        try:
+            result = train()
+        except Exception as error:
+            logger.error(f"Something went wrong: {error}")
+            model["state"] = "Failed"
+            model["message"] = "The model failed to load"
+            return
+        
+        
+        if not result.success:
+            logger.error(result.message)
+            model["state"] = "Failed"
+            model["message"] = "The model failed to load"
+            return
+            
+            
+        logger.info("Model successfully trained")
+        
+        
+        
+    logger.info("Now Loading Model")
+    try:
+        bundle = joblib.load(MODEL_PATH)
+        model["model"] = bundle["model"]
+    except Exception as error:
+        logger.error("Failed to load model")
+        model["state"] = "Failed"
+        model["message"] = "The model failed to load"
+        return
+    model["state"] = "Ready"
+    model["message"] = "The model is loaded and ready to use"
+    logger.info("Successfully loaded model and is now ready to use")
+    
+    return
+        
+    
+    
+      
+      
+      
+        
+
+@app.get("/api/health", response_model=HealthResponse, summary="Front-end connectivity check", description="Responds with online for frontend connectivity check. Also response with model loading state and if its ready or not")
 def health():
-    return HealthResponse(status="online")
+    
+    if model["state"] == "Loading":
+        model_status = False
+        model_state_description = model["message"]
+    elif model["state"] == "Ready":
+        model_status = True
+        model_state_description = model["message"]
+    else:
+        model_status = False
+        model_state_description = model["message"]
+    
+    return HealthResponse(
+        model_status=model_status,
+        model_state=model["state"],
+        model_state_description=model_state_description
+    )
 
 
 
@@ -25,4 +110,8 @@ def predict(data: PredictRequest):
     features = extract_features(url)
     ordered_features = features_dict_to_ordered_list(features)
 
-    return make_prediction(features, ordered_features)
+    return make_prediction(model, features, ordered_features)
+
+
+worker = threading.Thread(target=server_prechecks, name="Trainer", daemon=True)
+worker.start()

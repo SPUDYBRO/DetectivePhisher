@@ -34,5 +34,17 @@ class PredictResponse(BaseModel):
 
 class HealthResponse(BaseModel):
     status: Literal["online"] = Field(
-        description="Replies with 'online'. Used to detect if front-end is able to connect to the backend"
+        default="online",
+        description="The connection to the server was successful and the backend is ready to respond"
+    )
+    model_status: bool = Field(
+        default=False,
+        description="Boolean details of if the model is ready to use or not"
+    )
+    model_state: Literal["Ready", "Loading", "Failed"] = Field(
+        default="Loading",
+        description="A single word human readable state of if the model is ready to use or not"
+    )
+    model_state_description: str = Field(
+        description="A human readable, 1 sentence long, message describing model_state"
     )

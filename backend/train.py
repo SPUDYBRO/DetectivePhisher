@@ -11,6 +11,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 import sys
 from features import FEATURE_COLUMNS
 
+
 class Result(NamedTuple):
     success: bool
     message: str | None
