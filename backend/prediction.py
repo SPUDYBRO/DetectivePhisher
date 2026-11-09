@@ -3,11 +3,11 @@ import math
 from sklearn.tree import DecisionTreeClassifier
 import joblib
 from schemas import PredictResponse
-from pathlib import Path
 from typing import Any
 from train import MODEL_PATH
 
 from features import FEATURE_COLUMNS
+from fastapi import HTTPException
 
 
 
@@ -63,7 +63,7 @@ SENTENCES = {
 
 
 
-def make_prediction(features: dict[str, float], ordered_features: list) -> PredictResponse:
+def make_prediction(model: dict,features: dict[str, float], ordered_features: list) -> PredictResponse:
     """Feeds the model a URL with extracted features and makes it make a prediction if its safe or phishing
 
     Args:
@@ -74,9 +74,13 @@ def make_prediction(features: dict[str, float], ordered_features: list) -> Predi
         PredictResponse: A response that is ready to be sent to the front-end
     """
 
-    bundle = joblib.load(MODEL_PATH) # load the bundle (to be reworked)
-    model: DecisionTreeClassifier = bundle["model"] #grab the model from the bundle (to be reworked)
-    phishing_probability = float(model.predict_proba([ordered_features])[0][1]) # make a prediction based on the users input (extracted and proceessed already) (returns the probability)
+    if not model["state"] == "Ready":
+        if model["state"] == "Loading":
+            raise HTTPException(status_code=503, detail=model["message"] + ". Please try again later", headers={"Retry-After": "5"})
+        else:
+            raise HTTPException(status_code=503, detail=model["message"] + ". Please contact server administrators")
+        
+    phishing_probability = float(model["model"].predict_proba([ordered_features])[0][1]) # make a prediction based on the users input (extracted and proceessed already) (returns the probability)
     
     if phishing_probability >= 0.5:             #
         verdict = "phishing"                    #
@@ -86,7 +90,7 @@ def make_prediction(features: dict[str, float], ordered_features: list) -> Predi
         confidence = 1 - phishing_probability   #
     
     # Reason extraction
-    reasons = build_reasons(model, ordered_features)
+    reasons = build_reasons(model["model"], ordered_features)
     
     return PredictResponse(
         verdict=verdict,
