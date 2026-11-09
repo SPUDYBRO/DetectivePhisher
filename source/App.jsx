@@ -8,8 +8,8 @@ import serverStatusIcon from './icons/server-status-icon.svg?raw'
 import aiModelStatusIcon from './icons/ai-model-status-icon.svg?raw'
 
 const VERDICT_LABELS = {
-  legitimate: "Looks safe",
-  phishing: "Likely phishing"
+  legitimate: "Looks Safe",
+  phishing: "Most Likely Phishing"
 }
 
 // Maps the AI model's semantic state ("Ready"/"Loading"/"Failed") to its
@@ -27,17 +27,13 @@ const MAX_HISTORY_ENTRIES = 10
 const DONUT_RADIUS = 35
 const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS
 
-// Checks if the text starts with http:// or https://, ignoring captial letters.
-function hasScheme(text) {
-  const lower =text.toLowerCase()
-  if (lower.startsWith('http://')) {
-    return true
-  }
-  if (lower.startsWith('https://')) {
-    return true
-  }
-  return false
-}
+// The confidence gauge only draws the top half of a ring, so its viewBox is wider than it is tall (100x60).
+// Path is a single semicircle arc, reused for the background track and both of the coloured overlays.
+const GAUGE_RADIUS = 36
+const GAUGE_CENTER_X = 50
+const GAUGE_CENTER_Y = 50
+const GAUGE_HALF_CIRCUMFERENCE = Math.PI * GAUGE_RADIUS
+const GAUGE_ARC_PATH = `M ${GAUGE_CENTER_X - GAUGE_RADIUS} ${GAUGE_CENTER_Y} A ${GAUGE_RADIUS} ${GAUGE_RADIUS} 0 0 1 ${GAUGE_CENTER_X + GAUGE_RADIUS} ${GAUGE_CENTER_Y}`
 
 //Checks the url in the browser before it is sent. Gives back an error message, or an empty string if it is fine.
 // The backend checks it again, because frontend checks can be bypassed.
@@ -50,8 +46,9 @@ function validateURL(text) {
   if (trimmed.length > 2048) {
     return 'That URL is too long (2048 characters max).'
   }
-  if (trimmed.includes(' ')) {
-    return 'A URL cannot contain spaces.'
+  // \s covers spaces, tabs and newlines; \x00-\x1F and \x7F are non-printable control characters.
+  if (/[\s\x00-\x1F\x7F]/.test(trimmed)) {
+    return 'That URL is invalid: it cannot contain spaces or control characters.'
   }
 
   return ''
@@ -67,18 +64,21 @@ export default function App() {
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [notice, setNotice] = useState ('') //Holds the message telling the user we assumed http://
   const [status, setStatus] = useState("Loading")
   const [model_state, setModelState] = useState("Loading")
   const [page, setPage] = useState('home') // Remembers which page is showing: 'home', 'reports' or 'help'
 
   // Clamp in case the backend ever returns something outside 0-1.
   let safeFraction = 0
+  let safeConfidenceFraction = 0
   if (result) {
     safeFraction = Math.min(Math.max(1 - result.phishing_probability, 0), 1)
+    safeConfidenceFraction = Math.min(Math.max(result.confidence, 0), 1)
   }
   const safeArcLength = safeFraction * DONUT_CIRCUMFERENCE
   const remainderArcLength = DONUT_CIRCUMFERENCE - safeArcLength
+  const confidenceArcLength = safeConfidenceFraction * GAUGE_HALF_CIRCUMFERENCE
+  const confidenceRemainderArcLength = GAUGE_HALF_CIRCUMFERENCE - confidenceArcLength
 
   useEffect(() => {
     fetch("/api/health")
@@ -115,15 +115,7 @@ export default function App() {
     const problem = validateURL(url)
     if (problem !== '') {
       setError(problem)
-      setNotice('')
       return
-    }
-
-    //Tell the user when no http:// or https:// was entered, and we assumed http://
-    if (hasScheme(url.trim())) {
-      setNotice('')
-    } else {
-      setNotice('No protocol specified. This will be submitted as http:// unless you add https://')  
     }
 
     setLoading(true)
@@ -181,13 +173,11 @@ export default function App() {
               name="url"
               placeholder="Enter URL"
               value={url}
-              onChange={event => {
-                setUrl(event.target.value) 
-                setNotice('')
-              }}
+              onChange={event => setUrl(event.target.value)}
               aria-invalid={error !== ''}
               aria-describedby="url-message"
             />
+            <p className="url-hint">We'll check the URL with http:// by default unless https:// is stated.</p>
             <button type="submit" disabled={loading}>
               {loading ? 'Checking…' : 'Check Link'}
             </button>
@@ -195,7 +185,6 @@ export default function App() {
           {/* Messages sit under the input and are linked to it for screen readers */}
           <div id="url-message">
             {error && <p className="error-message" role="alert">{error}</p>}
-            {notice && <p className="notice-message">{notice}</p>}
           </div>
         </section>
 
@@ -205,63 +194,71 @@ export default function App() {
 
 
         <section id="results">
-          {result && (
-            <div id="verdict" className={`verdict-${result.verdict}`}>
-              <p className="verdict-headline">{VERDICT_LABELS[result.verdict] ?? result.verdict}</p>
-              <p className="verdict-confidence">{Math.round(result.confidence * 100)}% confident</p>
-            </div>
-          )}
+          {result ? (
+            <div id="verdictBanner" className={`verdict-banner verdict-banner-${result.verdict}`}>
+              <h3 className="verdict-banner-headline">{VERDICT_LABELS[result.verdict] ?? result.verdict}</h3>
 
-          <div id="report">
-            <h3>Report</h3>
-            {result ? (
-              <ul>
-                {/* CHANGED (7): the backend sends "reasons", not "report". React prints these as plain text. */}
-                {result.reasons.map((reason, index) => (
-                  <li key={index}>{reason}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>Submit a URL above to see the phishing report.</p>
-            )}
-          </div>
-
-          <div id="trustFactor">
-            <h3>Trust Factor</h3>
-            {result ? (
-              <div className="donut-chart">
-                {/* role and label let screen readers read the score, since they cannot see the drawing */}
-                <svg 
-                  viewBox="0 0 100 100" 
-                  className="chart-svg"
-                  role="img"
-                  aria-label={`Safety score ${Math.round(safeFraction * 100)} percent`}
-                >
-                    <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#4d8b47" strokeWidth="20" strokeDasharray={`${safeArcLength} ${DONUT_CIRCUMFERENCE}`}/>
-                    <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" stroke="#1f699e" strokeWidth="20" strokeDasharray={`${remainderArcLength} ${DONUT_CIRCUMFERENCE}`} strokeDashoffset={-safeArcLength}/>
-                </svg>
-                <div className="chart-label">{Math.round(safeFraction * 100)}%</div>
-              </div>
-            ) : (
-              <p>Trust score will appear here after a check.</p>
-            )}
-          </div>
-
-          
-          <div id="safetyHistory">
-            <h3>History</h3>
-            {history.length === 0 ? (
-              <p>No URLs checked yet this session.</p>
-            ) : (
-              <div className="history-list">
-                {history.map((entry, index) => (
-                  <div key={index} className="history-item">
-                    <span>{entry.url}</span>
+              <div className="verdict-banner-grid">
+                <div className="result-card" id="probabilityCard">
+                  <h4>Phishing Probability</h4>
+                  <div className="donut-chart">
+                    {/* role and label let screen readers read the score, since they cannot see the drawing */}
+                    <svg
+                      viewBox="0 0 100 100"
+                      className="chart-svg"
+                      role="img"
+                      aria-label={`Legitimate probability ${Math.round(safeFraction * 100)} percent`}
+                    >
+                        <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" className="donut-arc-legitimate" strokeWidth="20" strokeDasharray={`${safeArcLength} ${DONUT_CIRCUMFERENCE}`}/>
+                        <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" className="donut-arc-phishing" strokeWidth="20" strokeDasharray={`${remainderArcLength} ${DONUT_CIRCUMFERENCE}`} strokeDashoffset={-safeArcLength}/>
+                    </svg>
+                    <div className="chart-label">{Math.round(safeFraction * 100)}%</div>
                   </div>
-                ))}
+                  <p className="chart-caption">Probability of:</p>
+                  <div className="chart-legend">
+                    <span><span className="legend-swatch legend-legitimate"></span> Legitimate</span>
+                    <span><span className="legend-swatch legend-phishing"></span> Phishing</span>
+                  </div>
+                </div>
+
+                <div className="result-card" id="confidenceCard">
+                  <h4>Confidence</h4>
+                  <p className="confidence-disclaimer">Please remember that the model's predictions do not guarantee the legitimacy or illegitimacy of URLs.</p>
+                  <div className="gauge-chart">
+                    {/* role and label let screen readers read the score, since they cannot see the drawing */}
+                    <svg
+                      viewBox="0 0 100 60"
+                      className="gauge-svg"
+                      role="img"
+                      aria-label={`Confidence ${Math.round(safeConfidenceFraction * 100)} percent`}
+                    >
+                        <path d={GAUGE_ARC_PATH} fill="none" className="gauge-track" strokeWidth="14" strokeLinecap="round"/>
+                        <path d={GAUGE_ARC_PATH} fill="none" className="gauge-arc-confident" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${confidenceArcLength} ${GAUGE_HALF_CIRCUMFERENCE}`}/>
+                        <path d={GAUGE_ARC_PATH} fill="none" className="gauge-arc-uncertain" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${confidenceRemainderArcLength} ${GAUGE_HALF_CIRCUMFERENCE}`} strokeDashoffset={-confidenceArcLength}/>
+                    </svg>
+                    <div className="gauge-label">{Math.round(safeConfidenceFraction * 100)}%</div>
+                  </div>
+                  <p className="chart-caption">How sure the model is:</p>
+                  <div className="chart-legend">
+                    <span><span className="legend-swatch legend-confident"></span> Confident</span>
+                    <span><span className="legend-swatch legend-uncertain"></span> Uncertain</span>
+                  </div>
+                </div>
+
+                <div className="result-card" id="reasonsCard">
+                  <h4>Report</h4>
+                  <ul>
+                    {/* The backend sends "reasons", not "report". React prints these as plain text. */}
+                    {result.reasons.map((reason, index) => (
+                      <li key={index}>{reason}</li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <p className="results-placeholder">Submit a URL above to see the phishing report.</p>
+          )}
         </section>
         </>
         )}

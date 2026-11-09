@@ -49,13 +49,6 @@
     --custom-h2-margin: 0 0 0.5rem 0;
     --custom-h2-max-width: 600px;
 
-    /* Custom h3 Variable Section */
-    --custom-h3-font-size: 1.5rem;
-    --custom-h3-color: #000;
-    --custom-h3-margin: 0 0 1.5rem 0;
-    --custom-h3-width: 100%;
-
-
 
     
     /* Text Color Variable Section */
@@ -110,6 +103,7 @@
     --url-input-paragraph-color: #666;
     --url-input-paragraph-margin: 0 0 2rem 0;
     --url-input-paragraph-max-width: 600px;
+    --url-hint-margin: -1rem 0 0 0;
 
     /* URL Form Variable Section */
     --url-form-gap: 1.5rem;
@@ -143,7 +137,6 @@
     --url-form-button-disabled-opacity: 0.6;
 
     /* URL Input Error Message Section */
-    --url-input-notice-color: #1f699e;
     --url-input-error-message-color: #b02a37;    
     --url-input-error-message-margin-top: 1rem;
 
@@ -152,10 +145,50 @@
     /* Results Variable Section */
     --results-width: 100%;
     --results-padding: 3rem 2rem;
-    --results-grid-template-columns: 1fr 1fr 1fr;
-    --results-gap: 3rem;
     --results-background-color: #eeefea;
-    
+    --results-placeholder-color: #666;
+    --results-placeholder-padding: 2rem 0;
+
+    /* ############################ */
+    /* Verdict Banner Section        */
+    /* (the coloured box that wraps  */
+    /* the result cards)             */
+    /* ############################ */
+    --verdict-banner-padding: 2rem 1.5rem;
+    --verdict-banner-border-width: 2px;
+    --verdict-banner-border-radius: 0.75rem;
+    --verdict-banner-headline-font-size: 1.75rem;
+    --verdict-banner-headline-margin: 0 0 1.5rem 0;
+    --verdict-banner-grid-gap: 1.5rem;
+    --verdict-banner-grid-template-columns: 1fr 1fr;
+    --verdict-banner-grid-areas: "probability confidence" ". reasons";
+
+    /* One background/border colour pair per verdict, reusing the bar chart's benign/malicious colours */
+    --verdict-banner-legitimate-background-color: #dcecd9;
+    --verdict-banner-legitimate-border-color: var(--bar-chart-benign-color);
+    --verdict-banner-phishing-background-color: #f8d4d8;
+    --verdict-banner-phishing-border-color: var(--bar-chart-malicious-color);
+
+    /* ############################ */
+    /* Result Card Section           */
+    /* (shared white card used by    */
+    /* the probability/confidence/   */
+    /* report cards)                 */
+    /* ############################ */
+    --result-card-background-color: #ffffff;
+    --result-card-border: 1px solid #d7d7d7;
+    --result-card-border-radius: 0.5rem;
+    --result-card-padding: 1.25rem;
+    --result-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --result-card-max-height: 60vh;
+    --result-card-h4-margin: 0 0 0.75rem 0;
+
+    /* Caption/legend shared by the donut and gauge charts */
+    --chart-caption-color: #555;
+    --chart-caption-font-size: 0.85rem;
+    --chart-caption-margin: 0.75rem 0 0.25rem 0;
+    --chart-legend-gap: 1rem;
+
     /* ###################### */
     /* Results Report Section */
     /* ###################### */
@@ -179,54 +212,42 @@
     --results-report-li-before-font-weight: bold;
 
     /* ############################ */
-    /* Results Trust Factor Section */
+    /* Donut Chart Section            */
+    /* (Phishing Probability card)    */
     /* ############################ */
+    --donut-chart-width: 40%;
+    --donut-chart-height: 40%;
+    --donut-chart-margin: 1rem auto;
+    --donut-chart-svg-width: 100%;
+    --donut-chart-svg-height: 100%;
+    --donut-chart-svg-transform: rotate(-90deg);
+    --donut-chart-legitimate-color: var(--bar-chart-benign-color);
+    --donut-chart-phishing-color: var(--bar-chart-malicious-color);
+    --donut-chart-label-top: 50%;
+    --donut-chart-label-left: 50%;
+    --donut-chart-label-transform: translate(-50%, -50%);
+    --donut-chart-label-font-size: 2rem;
+    --donut-chart-label-color: #222121;
+    --donut-chart-label-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
-    /* Results Trust Factor Chart Section */
-    --results-trust-factor-chart-width: 80%;
-    --results-trust-factor-chart-height: 80%;
-    --results-trust-factor-chart-margin: 1rem;
-    
-    /* Results Trust Factor Chart SVG Section */
-    --results-trust-factor-chart-svg-width: 100%;
-    --results-trust-factor-chart-svg-height: 100%;
-    --results-trust-factor-chart-svg-transform: rotate(-90deg);
-
-    /* Results Trust Factor Chart Label Section */
-    --results-trust-factor-chart-label-top: 50%;
-    --results-trust-factor-chart-label-left: 50%;
-    --results-trust-factor-chart-label-transform: translate(-50%, -50%);
-    --results-trust-factor-chart-label-font-size: 2rem;
-    --results-trust-factor-chart-label-color: #222121;
-    --results-trust-factor-chart-label-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    
-    /* Results Trust Factor Chart Verdict Label Section */
-    --results-trust-factor-chart-verdict-label-font-size: 1.2rem;
-    --results-trust-factor-chart-verdict-label-color: #222121;
-    --results-trust-factor-chart-verdict-label-margin: 0;
-    
-    /* ####################### */
-    /* Results History Section */
-    /* ####################### */
-    
-    /* Results History List Section */
-    --results-history-list-gap: 1rem;
-    
-    /* Results History Item Section */
-    --results-history-item-padding: 1rem;
-    --results-history-item-background-color: #e0e0e0;
-    --results-history-item-border-radius: 1rem;
-    --results-history-item-color: #333;
-    --results-history-item-font-size: 0.95rem;
-    --results-history-item-min-height: 10%;
-    
     /* ############################ */
-    /* Standardized Results Section */
+    /* Gauge Chart Section            */
+    /* (Confidence card)              */
     /* ############################ */
-    
-    /* Standardization for the divs */
-    --results-section-max-height: 60vh;
-    --results-section-min-height: 10vh;
+    --gauge-chart-width: 50%;
+    --gauge-chart-aspect-ratio: 5 / 3;
+    --gauge-chart-margin: 1rem auto 0 auto;
+    --gauge-track-color: #e3e3e3;
+    --gauge-confident-color: var(--bar-chart-benign-color);
+    --gauge-uncertain-color: var(--bar-chart-malicious-color);
+    --gauge-label-top: 85%;
+    --gauge-label-left: 50%;
+    --gauge-label-transform: translate(-50%, -50%);
+    --gauge-label-font-size: 2rem;
+    --gauge-label-color: #222121;
+    --confidence-disclaimer-color: #666;
+    --confidence-disclaimer-font-size: 0.85rem;
+    --confidence-disclaimer-margin: 0 0 0.5rem 0;
 
     /* ############################ */
     /* Info Page Section (used by both the Help and Reports pages   */
@@ -508,6 +529,15 @@ footer {
             outline: var(--url-form-input-focus-outline);
         }
 
+        /* Hint under the input, styled like the intro paragraph above the form */
+        .url-hint {
+            /* Pulls the hint up closer to the input, overriding the form's flex gap */
+            margin: var(--url-hint-margin);
+            color: var(--url-input-paragraph-color);
+            max-width: var(--url-input-paragraph-max-width);
+            font-size: var(--url-input-paragraph-font-size);
+        }
+
         #urlForm button {
             border: none;
             cursor: pointer;
@@ -536,173 +566,230 @@ footer {
         color: var(--url-input-error-message-color);
         margin-top: var(--url-input-error-message-margin-top);
     }
-    /* Blue message for the http assumption, so it does not look like an error */
-    .notice-message {
-        color: var(--url-input-notice-color);
-        margin-top: var(--url-input-error-message-margin-top);
-    }    
 }
         
 /* Results Section */
 #results {
-    display: grid;
-    text-align: left;
     box-sizing: border-box;
-    align-items: flex-start;
-    
-    gap: var(--results-gap);
+    text-align: center;
+
     width: var(--results-width);
     padding: var(--results-padding);
     background-color: var(--results-background-color);
-    grid-template-columns: var(--results-grid-template-columns);
-    
-    #report {
-        display: flex;
-        flex-direction: column;
+
+    .results-placeholder {
+        color: var(--results-placeholder-color);
+        padding: var(--results-placeholder-padding);
     }
-    
-        #report h3 {
-            font-weight: bold;
-            text-align: center;
+}
 
-            color: var(--custom-h3-color);
-            width: var(--custom-h3-width);
-            margin: var(--custom-h3-margin);
-            font-size: var(--custom-h3-font-size);
-        }
+/* Verdict Banner: the coloured box that wraps the probability, confidence and report cards */
+.verdict-banner {
+    box-sizing: border-box;
+    text-align: center;
 
-        #report p{
-            text-align: center;
-        }
-    
-        #report ul {
-            display: flex;
-            list-style: none;
-            flex-direction: column;
-            
-            gap: var(--results-report-ul-gap);
-            margin: var(--results-report-ul-margin);
-            padding: var(--results-report-ul-padding);
-        }
+    padding: var(--verdict-banner-padding);
+    border-style: solid;
+    border-width: var(--verdict-banner-border-width);
+    border-radius: var(--verdict-banner-border-radius);
 
-        #report li {
-            position: relative;
-            
-            color: var(--results-report-li-color);
-            font-size: var(--results-report-li-font-size);
-            line-height: var(--results-report-li-line-height);
-            padding-left: var(--results-report-li-padding-left);
-        }
+    .verdict-banner-headline {
+        font-weight: bold;
 
-        #report li:before {
-            position: absolute;
-            
-            left: var(--results-report-li-before-left);
-            color: var(--results-report-li-before-color);
-            content: var(--results-report-li-before-content);
-            font-weight: var(--results-report-li-before-font-weight);
-        }
-
-    #trustFactor {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        justify-content: center;
+        margin: var(--verdict-banner-headline-margin);
+        font-size: var(--verdict-banner-headline-font-size);
     }
-    
-        #trustFactor h3 {
-            font-weight: bold;
-            text-align: center;
 
-            width: var(--custom-h3-width);
-            color: var(--custom-h3-color);
-            margin: var(--custom-h3-margin);
-            font-size: var(--custom-h3-font-size);
+    .verdict-banner-grid {  
+        display: grid;
+        text-align: left;
+        align-items: start;
+
+        gap: var(--verdict-banner-grid-gap);
+        grid-template-columns: var(--verdict-banner-grid-template-columns);
+        grid-template-areas: var(--verdict-banner-grid-areas);
+    }
+
+        /* Placed via the grid areas above: probability/confidence on top, report bottom right */
+        #probabilityCard {
+            grid-area: probability;
         }
 
-        #trustFactor p{
-            text-align: center;
+        #confidenceCard {
+            grid-area: confidence;
         }
 
-    .donut-chart {
+        #reasonsCard {
+            grid-area: reasons;
+        }
+}
+
+    /* One background/border colour pair per verdict */
+    .verdict-banner-legitimate {
+        background-color: var(--verdict-banner-legitimate-background-color);
+        border-color: var(--verdict-banner-legitimate-border-color);
+    }
+
+    .verdict-banner-phishing {
+        background-color: var(--verdict-banner-phishing-background-color);
+        border-color: var(--verdict-banner-phishing-border-color);
+    }
+
+/* Result Card: the shared white card used for the probability, confidence and report cards */
+.result-card {
+    box-sizing: border-box;
+    text-align: center;
+
+    background-color: var(--result-card-background-color);
+    border: var(--result-card-border);
+    border-radius: var(--result-card-border-radius);
+    padding: var(--result-card-padding);
+    box-shadow: var(--result-card-box-shadow);
+
+    h4 {
+        font-weight: bold;
+        margin: var(--result-card-h4-margin);
+    }
+}
+
+/* The report card keeps its reasons list left-aligned even though the card itself is centred.
+   Only its list scrolls if it grows long, so the fixed-size donut/gauge cards never show a scrollbar. */
+#reasonsCard {
+    text-align: left;
+
+    ul {
+        display: flex;
+        list-style: none;
+        flex-direction: column;
+        overflow-y: auto;
+
+        gap: var(--results-report-ul-gap);
+        margin: var(--results-report-ul-margin);
+        padding: var(--results-report-ul-padding);
+        max-height: var(--result-card-max-height);
+    }
+
+    li {
         position: relative;
-            
-        width: var(--results-trust-factor-chart-width);
-        height: var(--results-trust-factor-chart-height);
-        margin-bottom: var(--results-trust-factor-chart-margin);
-    }
-        
-        .chart-svg {
-            width: var(--results-trust-factor-chart-svg-width);
-            height: var(--results-trust-factor-chart-svg-height);
-            transform: var(--results-trust-factor-chart-svg-transform);
-        }
-            
-            .chart-label {
-                font-weight: bold;
-                position: absolute;
-                
-                top: var(--results-trust-factor-chart-label-top);
-                left: var(--results-trust-factor-chart-label-left);
-                color: var(--results-trust-factor-chart-label-color);
-                transform: var(--results-trust-factor-chart-label-transform);
-                font-size: var(--results-trust-factor-chart-label-font-size);
-                text-shadow: var(--results-trust-factor-chart-label-text-shadow);
-            }
-            
-        .verdict-label {
-            font-weight: bold;
-            text-align: center;
-            
-            color: var(--results-trust-factor-chart-verdict-label-color);
-            margin: var(--results-trust-factor-chart-verdict-label-margin);
-            font-size: var(--results-trust-factor-chart-verdict-label-font-size);
-        }
-        
-    #safetyHistory {
-        display: flex;
-        flex-direction: column;
-    }
-    
-        #safetyHistory h3 {
-            font-weight: bold;
-            text-align: center;
-            
-            color: var(--custom-h3-color);
-            margin: var(--custom-h3-margin);
-            font-size: var(--custom-h3-font-size);
-        }
 
-        #safetyHistory p{
-            text-align: center;
-        }
-        
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            
-            gap: var(--results-history-list-gap);
-        }
-        
-        .history-item {
-            display: flex;
-            text-align: center;
-            align-items: center;
-            justify-content: center;
-            
-            color: var(--results-history-item-color);
-            padding: var(--results-history-item-padding);
-            font-size: var(--results-history-item-font-size);
-            min-height: var(--results-history-item-min-height);
-            border-radius: var(--results-history-item-border-radius);
-            background-color: var(--results-history-item-background-color);
-        }
-
-
-    /* Standardized styling for the results section */
-    #report, #trustFactor, #safetyHistory {
-        max-height: var(--results-section-max-height);
+        color: var(--results-report-li-color);
+        font-size: var(--results-report-li-font-size);
+        line-height: var(--results-report-li-line-height);
+        padding-left: var(--results-report-li-padding-left);
     }
+
+    li:before {
+        position: absolute;
+
+        left: var(--results-report-li-before-left);
+        color: var(--results-report-li-before-color);
+        content: var(--results-report-li-before-content);
+        font-weight: var(--results-report-li-before-font-weight);
+    }
+}
+
+/* Caption and legend shared by the donut and gauge charts */
+.chart-caption {
+    color: var(--chart-caption-color);
+    margin: var(--chart-caption-margin);
+    font-size: var(--chart-caption-font-size);
+}
+
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    gap: var(--chart-legend-gap);
+}
+
+/* Donut Chart (Phishing Probability card) */
+.donut-chart {
+    position: relative;
+
+    width: var(--donut-chart-width);
+    height: var(--donut-chart-height);
+    margin: var(--donut-chart-margin);
+
+    .chart-svg {
+        width: var(--donut-chart-svg-width);
+        height: var(--donut-chart-svg-height);
+        transform: var(--donut-chart-svg-transform);
+    }
+
+    .chart-label {
+        font-weight: bold;
+        position: absolute;
+
+        top: var(--donut-chart-label-top);
+        left: var(--donut-chart-label-left);
+        color: var(--donut-chart-label-color);
+        transform: var(--donut-chart-label-transform);
+        font-size: var(--donut-chart-label-font-size);
+        text-shadow: var(--donut-chart-label-text-shadow);
+    }
+}
+
+    /* One colour for each slice, matching the legend below the chart */
+    .donut-arc-legitimate {
+        stroke: var(--donut-chart-legitimate-color);
+    }
+
+    .donut-arc-phishing {
+        stroke: var(--donut-chart-phishing-color);
+    }
+
+/* Gauge Chart (Confidence card) */
+.confidence-disclaimer {
+    color: var(--confidence-disclaimer-color);
+    margin: var(--confidence-disclaimer-margin);
+    font-size: var(--confidence-disclaimer-font-size);
+}
+
+.gauge-chart {
+    position: relative;
+
+    width: var(--gauge-chart-width);
+    aspect-ratio: var(--gauge-chart-aspect-ratio);
+    margin: var(--gauge-chart-margin);
+
+    .gauge-svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .gauge-label {
+        font-weight: bold;
+        position: absolute;
+
+        top: var(--gauge-label-top);
+        left: var(--gauge-label-left);
+        color: var(--gauge-label-color);
+        transform: var(--gauge-label-transform);
+        font-size: var(--gauge-label-font-size);
+    }
+}
+
+    /* Grey background track, filled from the left by the confident/uncertain arcs */
+    .gauge-track {
+        stroke: var(--gauge-track-color);
+    }
+
+    .gauge-arc-confident {
+        stroke: var(--gauge-confident-color);
+    }
+
+    .gauge-arc-uncertain {
+        stroke: var(--gauge-uncertain-color);
+    }
+
+/* Re-uses the bar chart's legend swatch, but with colours matching the gauge */
+.legend-confident {
+    background-color: var(--gauge-confident-color);
+}
+
+.legend-uncertain {
+    background-color: var(--gauge-uncertain-color);
 }
 
 /* Keeps the text in a readable column in the middle of the page */
@@ -742,10 +829,11 @@ footer {
     background-color: var(--url-form-button-background-color);
 }
 
-/* On narrow screens the results stack in one colum instead of three */
+/* On narrow screens the result cards stack in one column instead of two */
 @media (max-width: 700px) {
     :root {
-        --results-grid-template-columns: 1fr;
+        --verdict-banner-grid-template-columns: 1fr;
+        --verdict-banner-grid-areas: "probability" "confidence" "reasons";
         --results-padding: 2rem 1rem;
     }
 }
