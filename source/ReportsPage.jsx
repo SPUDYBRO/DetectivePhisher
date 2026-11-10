@@ -20,7 +20,7 @@ export default function ReportsPage({ history }) {
                 </div>
             )}
             {history.length === 0 && (
-            <>
+            <div className="hamster-loader">
             <p className="results-placeholder">No URLs checked yet this session.</p>
             {/* From Uiverse.io by Nawsome */}
             <div aria-label="Orange and tan hamster running in a metal wheel" role="img" className="wheel-and-hamster">
@@ -41,7 +41,7 @@ export default function ReportsPage({ history }) {
             	</div>
             	<div className="spoke"></div>
             </div>
-            </>
+            </div>
             )}
             {history.length > 0 && (
                 <div className="info-card">
