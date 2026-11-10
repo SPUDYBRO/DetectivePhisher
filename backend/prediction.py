@@ -6,6 +6,7 @@ from typing import Any
 
 from features import FEATURE_COLUMNS
 from fastapi import HTTPException
+from security_utils import prediction_slots
 
 
 
@@ -71,31 +72,37 @@ def make_prediction(model: dict,features: dict[str, float], ordered_features: li
     Returns:
         PredictResponse: A response that is ready to be sent to the front-end
     """
-    if not model["state"] == "Ready":
-        if model["state"] == "Loading":
-            raise HTTPException(status_code=503, detail=model["message"] + ". Please try again later", headers={"Retry-After": "5"})
-        else:
-            raise HTTPException(status_code=503, detail=model["message"] + ". Please contact server administrators")
+    if not prediction_slots.acquire(blocking=False):
+        raise HTTPException(503, "The server is busy, please try again later", headers={"Retry-After": "1"})
+    
+    try:
+        if not model["state"] == "Ready":
+            if model["state"] == "Loading":
+                raise HTTPException(status_code=503, detail=model["message"] + ". Please try again later", headers={"Retry-After": "5"})
+            else:
+                raise HTTPException(status_code=503, detail=model["message"] + ". Please contact server administrators")
+            
+        phishing_probability = float(model["model"].predict_proba([ordered_features])[0][1]) # make a prediction based on the users input (extracted and proceessed already) (returns the probability)
         
-    phishing_probability = float(model["model"].predict_proba([ordered_features])[0][1]) # make a prediction based on the users input (extracted and proceessed already) (returns the probability)
-    
-    if phishing_probability >= 0.5:             #
-        verdict = "phishing"                    #
-        confidence = phishing_probability       #
-    else:                                       # Decides if the model thinks its phishing or legitimate based on its probability of it being phishing
-        verdict = "legitimate"                  #
-        confidence = 1 - phishing_probability   #
-    
-    # Reason extraction
-    reasons = build_reasons(model["model"], ordered_features)
-    
-    return PredictResponse(
-        verdict=verdict,
-        confidence=confidence,
-        phishing_probability=phishing_probability,
-        reasons=reasons,
-        features=features,
-    )
+        if phishing_probability >= 0.5:             #
+            verdict = "phishing"                    #
+            confidence = phishing_probability       #
+        else:                                       # Decides if the model thinks its phishing or legitimate based on its probability of it being phishing
+            verdict = "legitimate"                  #
+            confidence = 1 - phishing_probability   #
+        
+        # Reason extraction
+        reasons = build_reasons(model["model"], ordered_features)
+        
+        return PredictResponse(
+            verdict=verdict,
+            confidence=confidence,
+            phishing_probability=phishing_probability,
+            reasons=reasons,
+            features=features,
+        )
+    finally:
+        prediction_slots.release()
 
 def build_reasons(model: DecisionTreeClassifier, row: list[float]) -> list[str]:
     """Turns the 3 biggest steps of the trees path into plain english sentences

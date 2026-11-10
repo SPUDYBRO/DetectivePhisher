@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from schemas import PredictRequest, PredictResponse, HealthResponse
+from security_utils import BodySizeLimitMiddleware, SecurityHeadersMiddleware
 from validation import validate_url
 from features import extract_features, features_dict_to_ordered_list, FEATURE_COLUMNS
 from prediction import make_prediction
@@ -24,11 +25,13 @@ ALLOWED_ORIGINS = [
     "http://127.0.0.1:4173",
 ]
 
+app.add_middleware(BodySizeLimitMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
     allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
+    allow_headers=["Content-Type"]
 )
 
 
