@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from schemas import PredictRequest, PredictResponse, HealthResponse, FeatureAverageResponse
 from validation import validate_url
 from features import extract_features, features_dict_to_ordered_list
@@ -12,6 +14,35 @@ import threading
 
 
 app = FastAPI(title="DetectivePhisher API")
+
+# Only our own front end may call this API from a browser. Vite's dev server runs on 5173;
+# "npm run build" + "npm run preview" (used to check the production build) serves it on 4173.
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:4173",
+    "http://127.0.0.1:4173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
+)
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    """Catches anything that isn't already an HTTPException, so every error (expected or not)
+    comes back in the same {"detail": ...} JSON shape the front end already understands, and
+    the real exception (which could contain a stack trace) is logged, never sent to the client.
+    """
+    logging.getLogger("uvicorn.error").exception("Unhandled error while processing request")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Something went wrong on our end. Please try again later."},
+    )
 
 model = {
     "state": "Loading",
