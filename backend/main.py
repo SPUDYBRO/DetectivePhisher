@@ -145,10 +145,6 @@ def predict(data: PredictRequest):
     return make_prediction(model, features, ordered_features)
 
 
-@app.get("/api/feature-averages", response_model=FeatureAverageResponse, summary="Feature averages for the comparison graph", description="Returns the average value of each feature for legitimate and phishing URLs, scaled so they can be plotted alongside a single checked URL")
-def feature_averages():
-    return FeatureAverageResponse(features=feature_average_chart_points())
-
 
 worker = threading.Thread(target=server_prechecks, name="Trainer", daemon=True)
 worker.start()
