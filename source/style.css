@@ -458,6 +458,8 @@ header {
         padding-bottom: var(--logo-bottom-padding);
         padding-left: var(--logo-left-padding);
         cursor: pointer;
+        /* Now a real link for keyboard access, so remove the browser's link underline */
+        text-decoration: none;
     }
     
     /* Extra Section */
@@ -1074,6 +1076,23 @@ a:focus-visible,
 button:focus-visible {
     outline: var(--focus-outline-width) solid var(--focus-outline-color);
     outline-offset: var(--focus-outline-offset);
+}
+
+/* The result charts and scrollable lists are focusable for keyboard users,
+   so they need the same visible focus ring as links and buttons */
+.chart-svg:focus-visible,
+.gauge-svg:focus-visible,
+.feature-average-svg:focus-visible,
+.reasons-list:focus-visible,
+.history-list:focus-visible {
+    outline: var(--focus-outline-width) solid var(--focus-outline-color);
+    outline-offset: var(--focus-outline-offset);
+}
+
+/* The header only receives focus programmatically (page changes),
+   so it never needs its own focus ring */
+header:focus {
+    outline: none;
 }
 
 

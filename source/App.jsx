@@ -1,5 +1,5 @@
 import {checkURL, getFeatureAverages} from './api.js'
-import { useEffect,useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import HelpPage from './HelpPage.jsx'
 import ReportsPage from './ReportsPage.jsx'
 import FeatureAverageChart from './FeatureAverageChart.jsx'
@@ -117,6 +117,23 @@ export default function App() {
     setPage(pageName)
   }
 
+  // Lets the page-change effect move keyboard focus back to the top of the page
+  const headerRef = useRef(null)
+  // Skips the focus move on the first render so loading the site doesn't steal focus
+  const isFirstRender = useRef(true)
+
+  // After switching pages, move focus to the header so tabbing starts from the
+  // nav bar and then flows into the new page content in order
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    if (headerRef.current) {
+      headerRef.current.focus()
+    }
+  }, [page]);
+
   // Marks the link for the page being shown so screenreaders can say "current page"
   function currentFor(pageName) {
     if (page === pageName) {
@@ -161,10 +178,12 @@ export default function App() {
 
   return (
     <>
-      <header>
-        <div id="logo" role="link" onClick={event => showPage(event, 'home')}>
+      {/* tabIndex -1 lets page changes focus the header without adding it to the Tab order */}
+      <header tabIndex={-1} ref={headerRef}>
+        {/* A real link so the logo is focusable and activates with Enter */}
+        <a id="logo" href="#" onClick={event => showPage(event, 'home')}>
           <h1>DetectivePhisher</h1>
-        </div>
+        </a>
         {/* nav tells screen readers this is the main menu */}
         <nav id="extra" aria-label="Main">
           <a href="#" aria-current={currentFor('reports')} onClick={event => showPage(event, 'reports')}>Reports</a>
@@ -172,7 +191,7 @@ export default function App() {
         </nav>
       </header>
 
-      <main>
+      <main id="main">
         {/* Home content only shows when the home page is chosen */}
         {page === 'help' && <HelpPage />}     
         {page === 'reports' && <ReportsPage history={history} />}          
@@ -187,7 +206,7 @@ export default function App() {
               type="text"
               id="url"
               name="url"
-              placeholder="Enter URL"
+              placeholder="http://example.com"
               value={url}
               onChange={event => setUrl(event.target.value)}
               aria-invalid={error !== ''}
@@ -209,7 +228,8 @@ export default function App() {
 
 
 
-        <section id="results">
+        {/* aria-live announces the verdict to screen readers when a result appears */}
+        <section id="results" aria-live="polite">
           {result ? (
             <div id="verdictBanner" className={`verdict-banner verdict-banner-${result.verdict}`}>
               <h3 className="verdict-banner-headline">{VERDICT_LABELS[result.verdict] ?? result.verdict}</h3>
@@ -218,12 +238,13 @@ export default function App() {
                 <div className="result-card" id="probabilityCard">
                   <h4>Phishing Probability</h4>
                   <div className="donut-chart">
-                    {/* role and label let screen readers read the score, since they cannot see the drawing */}
+                    {/* role and label let screen readers read the score, tabIndex lets keyboard users reach it */}
                     <svg
                       viewBox="0 0 100 100"
                       className="chart-svg"
                       role="img"
-                      aria-label={`Legitimate probability ${Math.round(safeFraction * 100)} percent`}
+                      tabIndex={0}
+                      aria-label={`Legitimate probability ${Math.round(safeFraction * 100)} percent, phishing probability ${Math.round((1 - safeFraction) * 100)} percent`}
                     >
                         <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" className="donut-arc-legitimate" strokeWidth="20" strokeDasharray={`${safeArcLength} ${DONUT_CIRCUMFERENCE}`}>
                           <title>{`Legitimate: ${Math.round(safeFraction * 100)}%`}</title>
@@ -245,11 +266,12 @@ export default function App() {
                   <h4>Confidence</h4>
                   <p className="confidence-disclaimer">Please remember that the model's predictions do not guarantee the legitimacy or illegitimacy of URLs.</p>
                   <div className="gauge-chart">
-                    {/* role and label let screen readers read the score, since they cannot see the drawing */}
+                    {/* role and label let screen readers read the score, tabIndex lets keyboard users reach it */}
                     <svg
                       viewBox="0 0 100 60"
                       className="gauge-svg"
                       role="img"
+                      tabIndex={0}
                       aria-label={`Confidence ${Math.round(safeConfidenceFraction * 100)} percent`}
                     >
                         <path d={GAUGE_ARC_PATH} fill="none" className="gauge-track" strokeWidth="14" strokeLinecap="round"/>
@@ -273,7 +295,8 @@ export default function App() {
                   <h4>Report</h4>
                   <p className="reasons-disclaimer">This identifies what influenced the model to make its decision.</p>
                   <p className="reasons-note">Please understand that these are only the top features that influenced it. These may not show an exact distribution of influence.</p>
-                  <ul className="reasons-list">
+                  {/* tabIndex lets keyboard users focus the list and scroll it with the arrow keys when it overflows */}
+                  <ul className="reasons-list" tabIndex={0} aria-label="Reasons behind the verdict">
                     {/* The backend sends "reasons", not "report". Each one gets its own box to match the report's design. */}
                     {result.reasons.map((reason, index) => (
                       <li key={index} className="reason-box">{reason}</li>
@@ -299,7 +322,8 @@ export default function App() {
                   <h4>History</h4>
                   <p className="chart-caption">You last viewed links in this browser session</p>
                   <p className="history-hint">(refreshing will clear)</p>
-                  <ul className="history-list">
+                  {/* tabIndex lets keyboard users focus the list and scroll it with the arrow keys when it overflows */}
+                  <ul className="history-list" tabIndex={0} aria-label="URLs checked this session">
                     {history.map((entry, index) => (
                       <li key={index} className="history-item" title={entry.url}>{entry.url}</li>
                     ))}

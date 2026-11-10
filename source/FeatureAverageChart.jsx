@@ -54,6 +54,7 @@ export default function FeatureAverageChart({ points, yourValues }) {
         viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
         className="feature-average-svg"
         role="img"
+        tabIndex={0}
         aria-label="Line chart comparing this URL's features against the legitimate and phishing averages"
       >
         {/* Grid lines with their numbers on the left */}
