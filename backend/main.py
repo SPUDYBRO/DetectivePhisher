@@ -4,7 +4,6 @@ from fastapi.responses import JSONResponse
 from schemas import PredictRequest, PredictResponse, HealthResponse, FeatureAverageResponse
 from validation import validate_url
 from features import extract_features, features_dict_to_ordered_list
-from feature_stats import feature_average_chart_points
 from prediction import make_prediction
 from train import MODEL_PATH
 import logging
