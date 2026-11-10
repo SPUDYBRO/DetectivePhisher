@@ -5,10 +5,11 @@ import ReportsPage from './ReportsPage.jsx'
 import FeatureAverageChart from './components/FeatureAverageChart.jsx'
 import PhishingProbabilityChart from './components/PhishingProbabilityChart.jsx'
 import ConfidenceChart from './components/ConfidenceChart.jsx'
-// ?raw imports the SVG file's markup as a plain string (built into Vite), so the
-// icon's currentColor stroke still picks up the status badge's text color.
-import serverStatusIcon from './icons/server-status-icon.svg?raw'
-import aiModelStatusIcon from './icons/ai-model-status-icon.svg?raw'
+// ?react (from vite-plugin-svgr) imports the actual SVG file as a real React component built
+// from its markup, so the icon's currentColor stroke still picks up the status badge's text
+// color, without needing dangerouslySetInnerHTML.
+import ServerStatusIcon from './icons/server-status-icon.svg?react'
+import AiModelStatusIcon from './icons/ai-model-status-icon.svg?react'
 
 const VERDICT_LABELS = {
   legitimate: "Looks Safe",
@@ -63,6 +64,20 @@ function toFeatureZScores(features) {
     zscores[key] = std > 0 ? (rawValue - mean) / std : 0
   }
   return zscores
+}
+
+// Each reason from the backend ends with "(raises suspicion)" or "(lowers suspicion)"
+// (see backend/prediction.py's build_reasons), so its box can be outlined red or green
+// to match. Reasons without either suffix (e.g. "no obvious red flags") get no extra class,
+// and fall back to the verdict-coloured border set in style.css.
+function reasonBoxClass(reason) {
+  if (reason.includes('(raises suspicion)')) {
+    return 'reason-box-raises'
+  }
+  if (reason.includes('(lowers suspicion)')) {
+    return 'reason-box-lowers'
+  }
+  return ''
 }
 
 //Checks the url in the browser before it is sent. Gives back an error message, or an empty string if it is fine.
@@ -270,7 +285,7 @@ export default function App() {
                   <ul className="reasons-list" tabIndex={0} aria-label="Reasons behind the verdict">
                     {/* The backend sends "reasons", not "report". Each one gets its own box to match the report's design. */}
                     {result.reasons.map((reason, index) => (
-                      <li key={index} className="reason-box">{reason}</li>
+                      <li key={index} className={`reason-box ${reasonBoxClass(reason)}`}>{reason}</li>
                     ))}
                   </ul>
                   <p className="chart-caption">The overall suspicion was:</p>
@@ -321,13 +336,13 @@ export default function App() {
         <div id="statusBoxes">
           <output className={`server-status-box ${status}`} title='The connection to the server'>
             <p>
-              <span style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: serverStatusIcon }} />
+              <ServerStatusIcon />
               {status}
             </p>
           </output>
           <output className={`model-status-box ${MODEL_STATE_CLASS[model_state] ?? 'loading'}`} title='The loading status of the AI Model'>
             <p>
-              <span style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: aiModelStatusIcon }} />
+              <AiModelStatusIcon />
               {model_state}
             </p>
           </output>

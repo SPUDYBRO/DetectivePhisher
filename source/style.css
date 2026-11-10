@@ -207,13 +207,16 @@
     --results-report-ul-margin: 0;
     --results-report-ul-gap: 0.75rem;
 
-    /* Each reason gets its own bordered box, using the same colour as the current verdict */
+    /* Each reason gets its own bordered box. Outline colour depends on whether that
+       specific reason raised or lowered suspicion (see .reason-box-raises/-lowers below) */
     --reason-box-background-color: #ffffff;
     --reason-box-border-width: 1px;
     --reason-box-border-radius: 0.3rem;
     --reason-box-padding: 0.6rem 0.75rem;
     --reason-box-color: #333;
     --reason-box-font-size: 0.9rem;
+    --reason-box-raises-border-color: var(--bar-chart-malicious-color);
+    --reason-box-lowers-border-color: var(--bar-chart-benign-color);
 
     /* Dims whichever "suspicion was" legend entry doesn't match the verdict */
     --reason-verdict-inactive-opacity: 0.35;
@@ -741,7 +744,7 @@ footer {
         max-height: var(--result-card-max-height);
     }
 
-    /* Each reason is its own box, outlined in the current verdict's colour */
+    /* Each reason is its own box; see .reason-box-raises/-lowers below for the border colour */
     .reason-box {
         text-align: center;
 
@@ -754,13 +757,25 @@ footer {
         font-size: var(--reason-box-font-size);
     }
 
+    /* Each reason ends with " (raises suspicion)"/" (lowers suspicion)" (see backend/prediction.py's
+       build_reasons), so its box is outlined red/green to match. Takes priority over the verdict-based
+       fallback below via the extra #reasonsCard + .reason-box specificity. */
+    .reason-box.reason-box-raises {
+        border-color: var(--reason-box-raises-border-color);
+    }
+
+    .reason-box.reason-box-lowers {
+        border-color: var(--reason-box-lowers-border-color);
+    }
+
     /* Dims whichever "suspicion was" legend entry doesn't match the verdict */
     .reason-verdict-inactive {
         opacity: var(--reason-verdict-inactive-opacity);
     }
 }
 
-    /* One reason-box border colour per verdict, matching the surrounding banner */
+    /* Fallback reason-box border colour per verdict, used only when a reason has no raises/lowers
+       direction of its own (e.g. the "no obvious red flags" message) */
     .verdict-banner-legitimate .reason-box {
         border-color: var(--verdict-banner-legitimate-border-color);
     }
