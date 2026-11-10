@@ -1,13 +1,10 @@
 import math
 
 from sklearn.tree import DecisionTreeClassifier
-import joblib
 from schemas import PredictResponse
 from typing import Any
-from train import MODEL_PATH
 
 from features import FEATURE_COLUMNS
-from feature_stats import feature_zscores
 from fastapi import HTTPException
 
 
@@ -74,7 +71,6 @@ def make_prediction(model: dict,features: dict[str, float], ordered_features: li
     Returns:
         PredictResponse: A response that is ready to be sent to the front-end
     """
-
     if not model["state"] == "Ready":
         if model["state"] == "Loading":
             raise HTTPException(status_code=503, detail=model["message"] + ". Please try again later", headers={"Retry-After": "5"})
@@ -99,7 +95,6 @@ def make_prediction(model: dict,features: dict[str, float], ordered_features: li
         phishing_probability=phishing_probability,
         reasons=reasons,
         features=features,
-        feature_zscores=feature_zscores(features),
     )
 
 def build_reasons(model: DecisionTreeClassifier, row: list[float]) -> list[str]:

@@ -13,14 +13,14 @@ def validate_url(url: str) -> str:
     stripped_url = url.strip()
     
     if not stripped_url: # Check if it was just whitespace
-        raise HTTPException(400, "The URL is empty")
+        raise HTTPException(422, "The URL is empty")
     
     
     for character in stripped_url:
         if character == " ":
-            raise HTTPException(400, "The URL contains spaces")
+            raise HTTPException(422, "The URL contains spaces")
         elif unicodedata.category(character).startswith("C"):
-            raise HTTPException(400, "The URL contains hidden or unusual characters")
+            raise HTTPException(422, "The URL contains hidden or unusual characters")
         
         
     #check if the URL starts with a protocol. Will go through all the characters from left to right looking for the specific patter of "://". If it runs into a [".", "?", "#", "/"] before that, then there is no protocol
@@ -46,19 +46,19 @@ def validate_url(url: str) -> str:
     try:
         parsed_url = urlparse(stripped_url)
     except ValueError:
-        raise HTTPException(400, detail="The URL isn't a valid URL")
+        raise HTTPException(422, detail="The URL isn't a valid URL")
     
     if not parsed_url.scheme in ["http", "https"]:
-        raise HTTPException(400, "The URL is using an unsupported protocol. Only use http:// and https://")
+        raise HTTPException(422, "The URL is using an unsupported protocol. Only use http:// and https://")
     
     if not parsed_url.hostname:
-        raise HTTPException(400, detail="The URL doesn't have a hostname")
+        raise HTTPException(422, detail="The URL doesn't have a hostname")
     
     try: # check if the url is an IP. if it is the case then it will need to skip the top level domain check because ips dont have one
         ipaddress.ip_address(parsed_url.hostname)
     except ValueError:
         if not bool(tldextract.extract(parsed_url.hostname).suffix):
-            raise HTTPException(400, "The URL doesn't have a top level domain (e.g .com)")
+            raise HTTPException(422, "The URL doesn't have a top level domain (e.g .com)")
     
     
     

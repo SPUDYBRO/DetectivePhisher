@@ -1,9 +1,10 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from schemas import PredictRequest, PredictResponse, HealthResponse, FeatureAverageResponse
+from fastapi.exceptions import RequestValidationError
+from schemas import PredictRequest, PredictResponse, HealthResponse
 from validation import validate_url
-from features import extract_features, features_dict_to_ordered_list
+from features import extract_features, features_dict_to_ordered_list, FEATURE_COLUMNS
 from prediction import make_prediction
 from train import MODEL_PATH
 import logging
@@ -33,15 +34,36 @@ app.add_middleware(
 
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(request: Request, exc: Exception):
-    """Catches anything that isn't already an HTTPException, so every error (expected or not)
-    comes back in the same {"detail": ...} JSON shape the front end already understands, and
-    the real exception (which could contain a stack trace) is logged, never sent to the client.
+    """Handles anything missed. This ensures that we (the developers) can see traceback to understand and fix the error
+    While users are given the generic something went wrong error
+
+    Returns:
+        JSONResponse: A generic error 500
     """
     logging.getLogger("uvicorn.error").exception("Unhandled error while processing request")
     return JSONResponse(
         status_code=500,
         content={"detail": "Something went wrong on our end. Please try again later."},
     )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    first_err = exc.errors()[0]
+    
+    field = "request body"
+    
+    for part in first_err["loc"]:
+        if isinstance(part, str) and part != "body":
+            field = part
+    
+    message = f"Invalid {field}: {first_err['msg']}"
+        
+    return JSONResponse(
+        status_code=422,
+        content={"detail": message}
+    )
+
+
 
 model = {
     "state": "Loading",
@@ -92,9 +114,11 @@ def server_prechecks():
     logger.info("Now Loading Model")
     try:
         bundle = joblib.load(MODEL_PATH)
+        if bundle["feature_columns"] != FEATURE_COLUMNS:
+            raise Exception("The model that was loaded didn't match the feature columns that are required.")
         model["model"] = bundle["model"]
     except Exception as error:
-        logger.error("Failed to load model")
+        logger.error(f"Failed to load model: {error}")
         model["state"] = "Failed"
         model["message"] = "The model failed to load"
         return
