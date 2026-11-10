@@ -626,11 +626,13 @@ footer {
     width: var(--results-width);
     padding: var(--results-padding);
     background-color: var(--results-background-color);
+}
 
-    .results-placeholder {
-        color: var(--results-placeholder-color);
-        padding: var(--results-placeholder-padding);
-    }
+/* Muted placeholder text shown before there is anything to display. Shared by the home
+   page (before a URL is checked) and the Reports page (before any history exists). */
+.results-placeholder {
+    color: var(--results-placeholder-color);
+    padding: var(--results-placeholder-padding);
 }
 
 /* Verdict Banner: the coloured box that wraps the probability, confidence and report cards */
@@ -881,6 +883,38 @@ footer {
     margin: 0 auto;
     max-width: var(--info-page-max-width);
     padding: var(--info-page-padding);
+}
+
+/* The Help and Reports pages' main heading, styled like the home page's "Check the link..."
+   headline so every page opens with the same look. Reuses the home page's heading variables. */
+.page-title {
+    text-align: center;
+
+    color: var(--custom-h2-color);
+    margin: var(--custom-h2-margin);
+    margin-inline: auto;
+    max-width: var(--custom-h2-max-width);
+    font-size: var(--custom-h2-font-size);
+    font-style: var(--custom-h2-font-style);
+    font-family: var(--custom-h2-font-family);
+}
+
+/* Shared white card for grouping content on the Help and Reports pages, reusing the
+   same background/border/shadow as the home page's result cards for a consistent look */
+.info-card {
+    box-sizing: border-box;
+    text-align: left;
+
+    margin: var(--bar-chart-margin);
+    background-color: var(--result-card-background-color);
+    border: var(--result-card-border);
+    border-radius: var(--result-card-border-radius);
+    padding: var(--result-card-padding);
+    box-shadow: var(--result-card-box-shadow);
+
+    h3 {
+        margin: var(--result-card-h4-margin);
+    }
 }
 
 /* Table of past checks on the reports page */

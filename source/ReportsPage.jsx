@@ -10,16 +10,18 @@ const VERDICT_LABELS = {
 export default function ReportsPage({ history }) {
     return (
         <section className="info-page">
-            <h2>Reports</h2>
-            {/* Second chart, answers a different question to the trust circle on the home page */}
+            <h2 className="page-title">Reports</h2>
+            {/* Second chart, answers a different question to the trust circle on the home page.
+                Wrapped in the same white card style as the home page's result cards. */}
             {history.length > 0 && (
-                <>
+                <div className="info-card">
                     <h3>How do my checks compare?</h3>
                     <TrustBarChart history={history} />
-                </>
+                </div>
             )}
-            {history.length === 0 && <p>No URLs checked yet this session.</p>}
+            {history.length === 0 && <p className="results-placeholder">No URLs checked yet this session.</p>}
             {history.length > 0 && (
+                <div className="info-card">
                 <table className="reports-table">
                 <thead>
                     <tr>
@@ -43,6 +45,7 @@ export default function ReportsPage({ history }) {
                     ))}
                 </tbody>
                 </table>
+                </div>
             )}
         </section>
     )
