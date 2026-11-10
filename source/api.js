@@ -23,23 +23,3 @@ export async function checkURL(url) {
 
   return data
 }
-
-// Fetched once on load: the average value of each feature for legitimate and phishing
-// URLs, used to draw the "Feature average" comparison graph alongside a checked URL.
-export async function getFeatureAverages() {
-  let response
-
-  try {
-    response = await fetch('/api/feature-averages')
-  }
-  catch (error) {
-    throw new Error("Could not reach the server. Check server status in bottom right")
-  }
-
-  if (!response.ok) {
-    throw new Error("Could not load the feature averages")
-  }
-
-  const data = await response.json()
-  return data.features
-}

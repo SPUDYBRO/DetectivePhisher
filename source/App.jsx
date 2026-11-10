@@ -1,8 +1,10 @@
-import {checkURL, getFeatureAverages} from './api.js'
+import {checkURL} from './api.js'
 import { useEffect, useRef, useState } from 'react'
 import HelpPage from './HelpPage.jsx'
 import ReportsPage from './ReportsPage.jsx'
-import FeatureAverageChart from './FeatureAverageChart.jsx'
+import FeatureAverageChart from './components/FeatureAverageChart.jsx'
+import PhishingProbabilityChart from './components/PhishingProbabilityChart.jsx'
+import ConfidenceChart from './components/ConfidenceChart.jsx'
 // ?raw imports the SVG file's markup as a plain string (built into Vite), so the
 // icon's currentColor stroke still picks up the status badge's text color.
 import serverStatusIcon from './icons/server-status-icon.svg?raw'
@@ -24,17 +26,44 @@ const MODEL_STATE_CLASS = {
 
 const MAX_HISTORY_ENTRIES = 10
 
-// Radius is kept small enough (r + strokeWidth / 2 <= 50) that the ring stays inside the 100x100 viewBox.
-const DONUT_RADIUS = 35
-const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS
+// Legitimate/phishing averages for the "Feature average" graph, pre-scaled as z-scores.
+// Computed from backend/data/processed Dataset2.csv: each value is
+// (class mean - overall mean) / overall standard deviation, for benign vs malicious
+// URLs, for every feature the model is trained on (see backend/features.py).
+const FEATURE_AVERAGES = [
+  { key: "num_dots", label: "Dots", legitimate: -0.28, phishing: 0.36 },
+  { key: "num_hyphens", label: "Hyphens", legitimate: 0.24, phishing: -0.31 },
+  { key: "host_hyphens", label: "Host hyphens", legitimate: -0.19, phishing: 0.24 },
+  { key: "has_https", label: "HTTPS", legitimate: 0.57, phishing: -0.73 },
+  { key: "has_ip", label: "IP address", legitimate: -0.14, phishing: 0.18 },
+  { key: "domain_length", label: "Domain length", legitimate: -0.25, phishing: 0.32 },
+  { key: "has_at_symbol", label: "@ symbol", legitimate: -0.08, phishing: 0.10 },
+]
 
-// The confidence gauge only draws the top half of a ring, so its viewBox is wider than it is tall (100x60).
-// Path is a single semicircle arc, reused for the background track and both of the coloured overlays.
-const GAUGE_RADIUS = 36
-const GAUGE_CENTER_X = 50
-const GAUGE_CENTER_Y = 50
-const GAUGE_HALF_CIRCUMFERENCE = Math.PI * GAUGE_RADIUS
-const GAUGE_ARC_PATH = `M ${GAUGE_CENTER_X - GAUGE_RADIUS} ${GAUGE_CENTER_Y} A ${GAUGE_RADIUS} ${GAUGE_RADIUS} 0 0 1 ${GAUGE_CENTER_X + GAUGE_RADIUS} ${GAUGE_CENTER_Y}`
+// The same overall mean/standard deviation used to turn FEATURE_AVERAGES into z-scores,
+// also from backend/data/processed Dataset2.csv. The backend only sends back a checked
+// URL's raw feature values (result.features), so these let the front-end rescale them
+// onto the same -4..4 z-score axis to plot alongside the legitimate/phishing averages.
+const FEATURE_STATS = {
+  num_dots: { mean: 2.8418, std: 2.0250 },
+  num_hyphens: { mean: 1.7871, std: 3.0166 },
+  host_hyphens: { mean: 0.2002, std: 0.6921 },
+  has_https: { mean: 0.4230, std: 0.4940 },
+  has_ip: { mean: 0.0191, std: 0.1368 },
+  domain_length: { mean: 20.7723, std: 16.4479 },
+  has_at_symbol: { mean: 0.0088, std: 0.0934 },
+}
+
+// Converts the backend's raw per-feature values (result.features) into z-scores, so the
+// checked URL's line can be drawn on the same axis as the legitimate/phishing averages.
+function toFeatureZScores(features) {
+  const zscores = {}
+  for (const [key, { mean, std }] of Object.entries(FEATURE_STATS)) {
+    const rawValue = features[key] ?? mean
+    zscores[key] = std > 0 ? (rawValue - mean) / std : 0
+  }
+  return zscores
+}
 
 //Checks the url in the browser before it is sent. Gives back an error message, or an empty string if it is fine.
 // The backend checks it again, because frontend checks can be bypassed.
@@ -68,19 +97,13 @@ export default function App() {
   const [status, setStatus] = useState("Loading")
   const [model_state, setModelState] = useState("Loading")
   const [page, setPage] = useState('home') // Remembers which page is showing: 'home', 'reports' or 'help'
-  const [featureAverages, setFeatureAverages] = useState([])
 
-  // Clamp in case the backend ever returns something outside 0-1.
-  let safeFraction = 0
-  let safeConfidenceFraction = 0
+  // The checked URL's features, rescaled to z-scores so they can be plotted
+  // alongside the legitimate/phishing averages on the feature average chart.
+  let yourFeatureZScores = null
   if (result) {
-    safeFraction = Math.min(Math.max(1 - result.phishing_probability, 0), 1)
-    safeConfidenceFraction = Math.min(Math.max(result.confidence, 0), 1)
+    yourFeatureZScores = toFeatureZScores(result.features)
   }
-  const safeArcLength = safeFraction * DONUT_CIRCUMFERENCE
-  const remainderArcLength = DONUT_CIRCUMFERENCE - safeArcLength
-  const confidenceArcLength = safeConfidenceFraction * GAUGE_HALF_CIRCUMFERENCE
-  const confidenceRemainderArcLength = GAUGE_HALF_CIRCUMFERENCE - confidenceArcLength
 
   // Both the health fetch and a short timer run in parallel, and the badge only
   // updates once both finish, so "Loading" is visible for at least this long.
@@ -102,13 +125,6 @@ export default function App() {
     Promise.all([healthCheck, minimumWait])
     .then(([data]) => setModelState(data.model_state))
     .catch(() => minimumWait.then(() => setModelState('Failed')))
-  }, []);
-
-  // Loaded once: the legitimate/phishing feature averages used by the "Feature average" graph
-  useEffect(() => {
-    getFeatureAverages()
-    .then(setFeatureAverages)
-    .catch(() => setFeatureAverages([]))
   }, []);
 
   // Changes the page and stops the link from reloading the browser
@@ -237,58 +253,13 @@ export default function App() {
               <div className="verdict-banner-grid">
                 <div className="result-card" id="probabilityCard">
                   <h4>Phishing Probability</h4>
-                  <div className="donut-chart">
-                    {/* role and label let screen readers read the score, tabIndex lets keyboard users reach it */}
-                    <svg
-                      viewBox="0 0 100 100"
-                      className="chart-svg"
-                      role="img"
-                      tabIndex={0}
-                      aria-label={`Legitimate probability ${Math.round(safeFraction * 100)} percent, phishing probability ${Math.round((1 - safeFraction) * 100)} percent`}
-                    >
-                        <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" className="donut-arc-legitimate" strokeWidth="20" strokeDasharray={`${safeArcLength} ${DONUT_CIRCUMFERENCE}`}>
-                          <title>{`Legitimate: ${Math.round(safeFraction * 100)}%`}</title>
-                        </circle>
-                        <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" className="donut-arc-phishing" strokeWidth="20" strokeDasharray={`${remainderArcLength} ${DONUT_CIRCUMFERENCE}`} strokeDashoffset={-safeArcLength}>
-                          <title>{`Phishing: ${Math.round((1 - safeFraction) * 100)}%`}</title>
-                        </circle>
-                    </svg>
-                    <div className="chart-label">{Math.round(safeFraction * 100)}%</div>
-                  </div>
-                  <p className="chart-caption">Probability of:</p>
-                  <div className="chart-legend">
-                    <span><span className="legend-swatch legend-legitimate"></span> Legitimate</span>
-                    <span><span className="legend-swatch legend-phishing"></span> Phishing</span>
-                  </div>
+                  <PhishingProbabilityChart phishingProbability={result.phishing_probability} />
                 </div>
 
                 <div className="result-card" id="confidenceCard">
                   <h4>Confidence</h4>
                   <p className="confidence-disclaimer">Please remember that the model's predictions do not guarantee the legitimacy or illegitimacy of URLs.</p>
-                  <div className="gauge-chart">
-                    {/* role and label let screen readers read the score, tabIndex lets keyboard users reach it */}
-                    <svg
-                      viewBox="0 0 100 60"
-                      className="gauge-svg"
-                      role="img"
-                      tabIndex={0}
-                      aria-label={`Confidence ${Math.round(safeConfidenceFraction * 100)} percent`}
-                    >
-                        <path d={GAUGE_ARC_PATH} fill="none" className="gauge-track" strokeWidth="14" strokeLinecap="round"/>
-                        <path d={GAUGE_ARC_PATH} fill="none" className="gauge-arc-confident" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${confidenceArcLength} ${GAUGE_HALF_CIRCUMFERENCE}`}>
-                          <title>{`Confident: ${Math.round(safeConfidenceFraction * 100)}%`}</title>
-                        </path>
-                        <path d={GAUGE_ARC_PATH} fill="none" className="gauge-arc-uncertain" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${confidenceRemainderArcLength} ${GAUGE_HALF_CIRCUMFERENCE}`} strokeDashoffset={-confidenceArcLength}>
-                          <title>{`Uncertain: ${Math.round((1 - safeConfidenceFraction) * 100)}%`}</title>
-                        </path>
-                    </svg>
-                    <div className="gauge-label">{Math.round(safeConfidenceFraction * 100)}%</div>
-                  </div>
-                  <p className="chart-caption">How sure the model is:</p>
-                  <div className="chart-legend">
-                    <span><span className="legend-swatch legend-confident"></span> Confident</span>
-                    <span><span className="legend-swatch legend-uncertain"></span> Uncertain</span>
-                  </div>
+                  <ConfidenceChart confidence={result.confidence} />
                 </div>
 
                 <div className="result-card" id="reasonsCard">
@@ -302,7 +273,7 @@ export default function App() {
                       <li key={index} className="reason-box">{reason}</li>
                     ))}
                   </ul>
-                  <p className="chart-caption">The suspicion was:</p>
+                  <p className="chart-caption">The overall suspicion was:</p>
                   <div className="chart-legend">
                     <span className={result.verdict === 'legitimate' ? 'reason-verdict-active' : 'reason-verdict-inactive'}>
                       <span className="legend-swatch legend-legitimate"></span> Legitimate
@@ -315,7 +286,7 @@ export default function App() {
 
                 <div className="result-card" id="featureAverageCard">
                   <h4>Feature average of URL against legitimate and phishing</h4>
-                  <FeatureAverageChart points={featureAverages} yourValues={result.feature_zscores} />
+                  <FeatureAverageChart points={FEATURE_AVERAGES} yourValues={yourFeatureZScores} />
                 </div>
 
                 <div className="result-card" id="historyCard">

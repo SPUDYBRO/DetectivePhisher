@@ -1,4 +1,4 @@
-import TrustBarChart from './TrustBarChart.jsx'
+import TrustBarChart from './components/TrustBarChart.jsx'
 
 // CHANGED (1): keys match the backend's two verdicts
 const VERDICT_LABELS = {
