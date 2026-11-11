@@ -101,14 +101,20 @@ These kinds of people can thankfully only do so much damage to a simple site lik
 The two security defenses we decided to implement was `denial of service` and `Misconfiguration and vulnerable dependencies`
 
 ### denial of service.
-We deny requests that are too large and might slow the system down. We do this by looking at the packet as it comes it. if it is one packet, we look and identify if it is too large. we drop it if it is. For multiple packets we watch as they come in, but as soon as it gets too large we drop it. Both returning 413 error codes.
-We also developed a way to block too many requests on our model. We do this my making a bounded semaphore (essentially a line that rejects anyone from joining if it is full) and allowing only them to work.
+We deny requests that are too large and might slow the system down. We do this by looking at the packet as it comes in. If it is one packet, we look and identify if it is too large. We drop it if it is. For multiple packets we watch as they come in, but as soon as it gets too large we drop it. Both returning 413 error codes.
+
+We also developed a way to block too many requests on our model. We do this by making a bounded semaphore (essentially a line that rejects anyone from joining if it is full) and allowing only them to work.
+
 For flooding though, our model is extremely light and can handle lots of requests at once with ease, and if it gets too big we block it.
 
 ### Misconfiguration and vulnerable dependencies
 Upon running npm audit we received two vulnerabilities notices. 1 moderate, and one high.
-this is because we were using outdated Vite (6.4.3) which inturn caused other packages to be outdated. We fixed this by updating Vite to 8 and then doing a fresh install of npm (to remove old dependencies) which fixed both issues
-On top we ran a OWASP ZAP and found only 1 finding one issue, this being that we had no `X-Content-Type-Options` header set. This header not being present means our server doesn't send the nosniff directive and opens us up to MIME confusion and possible XSS vulnerabilities
+
+This is because we were using outdated Vite (6.4.3) which in turn caused other packages to be outdated. We fixed this by updating Vite to 8 and then doing a fresh install of npm (to remove old dependencies) which fixed both issues.
+
+On top we ran OWASP ZAP. Our initial scan found that we had no X-Content-Type-Options header set. This header not being present means our server doesn't send the nosniff directive and opens us up to MIME confusion and possible XSS vulnerabilities. We added the X-Content-Type-Options: nosniff header, along with X-Frame-Options and Referrer-Policy.
+
+A subsequent OWASP ZAP scan identified one remaining medium-risk finding: the Content-Security-Policy (CSP) Header Not Set. This remains a limitation in our current security configuration.
 
 
 
