@@ -244,8 +244,14 @@ I Evan Harrison (105929605) contributed to approx 99% of backend code. I used AI
     -  `validation.py` AI was only used for giving me ideas on what I should block, and any bugs that may occur.
     -  Overall. AI was used for debugging, or checking if what we have meets requirements
 
-1 Henry Bennett (105923571) contributed to approx 98% of front end code. I used AI for the following (most -> least used)
+I Henry Bennett (105923571) contributed to approx 98% of front end code. I used AI for the following (most -> least used)
     - `App.jsx` I have a great understanding of HTML but i did need AI to help me understand how to load the SVG icons as jsx.
     - `ai-model-status-icon.svg` I am new to making icons as .svg so i used AI to learn how to make them.
     - `server-status-icon.svg` I am new to making icons as .svg so i used AI to learn how to make them.
     - `style.css` Also hae a great understanding on CSS but learnt how to set min, preferred max size settings for something using `clamp` like `--donut-chart-label-font-size: clamp(0.75rem, 15cqw, 1.5rem);` in line 239 where cqw stands for Container Query Width meaning in this case the preferred size of the font in this case should be 15% of the containers width but no small or big that 0.75rem/1.5rem.
+
+I Priyankha Sakthivel (105919486) contributed to frontend development, visualisations, security testing, and documentation. I used AI for the following (most -> least used)
+    - `App.jsx` and `style.css`: AI helped me debug issues and explore solutions to specific frontend problems.
+    - Trust chart: AI helped me troubleshoot chart layout and functionality.
+    - Security testing: AI helped me understand test results for oversized requests, security headers, and dependency vulnerabilities.
+    - Overall: AI was mainly used for debugging and exploring ideas when I encountered difficulties.
