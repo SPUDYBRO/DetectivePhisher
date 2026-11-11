@@ -5,6 +5,7 @@ import ReportsPage from './ReportsPage.jsx'
 import FeatureAverageChart from './components/FeatureAverageChart.jsx'
 import PhishingProbabilityChart from './components/PhishingProbabilityChart.jsx'
 import ConfidenceChart from './components/ConfidenceChart.jsx'
+import HamsterLoader from './components/HamsterLoader.jsx'
 // ?react (from vite-plugin-svgr) imports the actual SVG file as a real React component built
 // from its markup, so the icon's currentColor stroke still picks up the status badge's text
 // color, without needing dangerouslySetInnerHTML.
@@ -12,8 +13,8 @@ import ServerStatusIcon from './icons/server-status-icon.svg?react'
 import AiModelStatusIcon from './icons/ai-model-status-icon.svg?react'
 
 const VERDICT_LABELS = {
-  legitimate: "Looks Safe",
-  phishing: "Most Likely Phishing"
+  legitimate: "safe",
+  phishing: "phishing"
 }
 
 // Maps the AI model's semantic state ("Ready"/"Loading"/"Failed") to its
@@ -106,6 +107,9 @@ function validateURL(text) {
 export default function App() {
   const [url, setUrl] = useState('')
   const [result, setResult] = useState(null)
+  // The URL the result belongs to, kept separate from the live `url` input
+  // state so it doesn't change if the user edits the box after checking.
+  const [checkedUrl, setCheckedUrl] = useState('')
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -123,6 +127,11 @@ export default function App() {
   // Both the health fetch and a short timer run in parallel, and the badge only
   // updates once both finish, so "Loading" is visible for at least this long.
   const MIN_STATUS_LOADING_MS = 1500
+
+  // Same minimum-wait pattern as above, but for the hamster loader shown
+  // while a URL check is in flight, so it reads as a loading animation
+  // rather than a flicker even when the server responds instantly.
+  const MIN_RESULT_LOADING_MS = 1500
 
   useEffect(() => {
     const minimumWait = new Promise(resolve => setTimeout(resolve, MIN_STATUS_LOADING_MS))
@@ -186,9 +195,13 @@ export default function App() {
     setLoading(true)
     setError('')
     setResult(null)
+    // Runs alongside the request so the hamster loader shows for at least this
+    // long, even when the server answers instantly or fails right away.
+    const minimumWait = new Promise(resolve => setTimeout(resolve, MIN_RESULT_LOADING_MS))
     try {
-      const data = await checkURL(url)
+      const [data] = await Promise.all([checkURL(url), minimumWait])
       setResult(data)
+      setCheckedUrl(url)
       setHistory(prev => [
         {
           url,
@@ -201,6 +214,7 @@ export default function App() {
         ...prev
       ].slice(0, MAX_HISTORY_ENTRIES))
     } catch (err) {
+      await minimumWait
       setError(err.message)
     } finally {
       setLoading(false)
@@ -262,9 +276,12 @@ export default function App() {
 
         {/* aria-live announces the verdict to screen readers when a result appears */}
         <section id="results" aria-live="polite">
-          {result ? (
+          {loading ? (
+            <HamsterLoader message="Checking the URL…" />
+          ) : result ? (
             <div id="verdictBanner" className={`verdict-banner verdict-banner-${result.verdict}`}>
-              <h3 className="verdict-banner-headline">{VERDICT_LABELS[result.verdict] ?? result.verdict}</h3>
+              <h3 className="verdict-banner-headline">Your URL is most likely {VERDICT_LABELS[result.verdict] ?? result.verdict}</h3>
+              <p className="verdict-banner-url">{checkedUrl}</p>
 
               <div className="verdict-banner-grid">
                 <div className="result-card" id="probabilityCard">

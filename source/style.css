@@ -80,8 +80,6 @@
     --extra-bottom-padding: 0.2rem;
     --extra-right-padding: 1.5rem;
 
-
-
     /* Footer Variable Section */
     --footer-background-color: #464444;
     --footer-text-color: #fdfafa;
@@ -90,8 +88,7 @@
     --footer-bottom-padding: 0.5rem;
     --footer-left-padding: 0.6rem;
     --footer-p-margin: 0;
-
-
+    --footer-padding: 0 1.5rem;
 
     /* URL Input Variable Section */
     --standardised-width: 100%;
@@ -148,6 +145,8 @@
     --results-background-color: #eeefea;
     --results-placeholder-color: #666;
     --results-placeholder-padding: 2rem 0;
+    --results-fade-in-duration: 1s;
+    --results-fade-in-timing-function: ease;
 
     /* ############################ */
     /* Verdict Banner Section        */
@@ -158,7 +157,8 @@
     --verdict-banner-border-width: 2px;
     --verdict-banner-border-radius: 0.75rem;
     --verdict-banner-headline-font-size: 1.75rem;
-    --verdict-banner-headline-margin: 0 0 1.5rem 0;
+    --verdict-banner-headline-margin: 0 0 0.25rem 0;
+    --verdict-banner-url-margin: 0 auto 1.5rem auto;
     --verdict-banner-grid-gap: 1.5rem;
     --verdict-banner-grid-template-columns: 1fr 1fr 1fr;
     --verdict-banner-grid-areas: "probability confidence reasons" "features features history";
@@ -267,6 +267,8 @@
     --info-page-table-cell-padding: 0.75rem;
     --info-page-table-border: 1px solid #ccc;
     --info-page-link-color: #1f699e;
+    --reports-table-row-gap: 1rem;
+    --reports-table-label-margin: 0 0 0.25rem 0;
 
     /* ############################ */
     /* Bar Chart Variable Section   */
@@ -337,9 +339,15 @@
     /* Status Badge Section */
     /* #################### */
 
+
+    /* Status Badge Container Section */
+    --status-badge-container-width: 20%;
+    --status-badge-container-height: auto;
+    --status-badge-container-row-gap: 0.75rem;
+
     /* Status Badge Box Section */
-    --status-badge-height: 20px;
-    --status-badge-width: auto;
+    --status-badge-width: 60%;
+    --status-badge-height: auto;
     --status-badge-padding: 0 1.25rem;
     --status-badge-gap: 0.75rem;
     --status-badge-border: 2px solid rgba(255, 255, 255, 0.3);
@@ -349,7 +357,7 @@
     --status-badge-text-color: #ffffff;
     --status-badge-font-weight: 600;
     --status-badge-font-size: 0.8rem;
-    --status-badge-letter-spacing: 0.4px;
+    --status-badge-letter-spacing: 0.05rem;
     --status-badge-transition: all 0.3s ease;
     --status-badge-z-index: 10;
 
@@ -500,7 +508,7 @@ footer {
     justify-content: space-between;
 
     gap: 1rem;
-    padding: 0 1.5rem;
+    padding: var(--footer-padding);
     height: var(--footer-height);
     background-color: var(--footer-background-color);
     
@@ -631,6 +639,24 @@ footer {
     background-color: var(--results-background-color);
 }
 
+/* Fades in whichever state (loader, placeholder or verdict banner) is currently
+   showing inside the results section, so each swap between them is smooth
+   instead of appearing instantly. */
+@keyframes resultsFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+#results .hamster-loader,
+#results .results-placeholder,
+#results .verdict-banner {
+    animation: resultsFadeIn var(--results-fade-in-duration) var(--results-fade-in-timing-function);
+}
+
 /* Muted placeholder text shown before there is anything to display. Shared by the home
    page (before a URL is checked) and the Reports page (before any history exists). */
 .results-placeholder {
@@ -653,6 +679,14 @@ footer {
 
         margin: var(--verdict-banner-headline-margin);
         font-size: var(--verdict-banner-headline-font-size);
+    }
+
+    /* Shows the checked URL under the headline, styled like the hint under the home page's input */
+    .verdict-banner-url {
+        color: var(--url-input-paragraph-color);
+        margin: var(--verdict-banner-url-margin);
+        max-width: var(--url-input-paragraph-max-width);
+        font-size: var(--url-input-paragraph-font-size);
     }
 
     .verdict-banner-grid {  
@@ -937,14 +971,15 @@ footer {
 /* ##### Reports Page ##### */
 /* ######################## */
 
-/* Centers the "no history yet" placeholder text and the hamster loader below it */
+/* Centers the placeholder/loading text and the hamster loader below it.
+   Shared by the reports page's empty state and the home page's loading state. */
 .hamster-loader {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* Hamster Loader for the Reports page */
+/* Hamster Loader, shared between the reports and home pages */
 /* From Uiverse.io by Nawsome */ 
 .wheel-and-hamster {
   --dur: 1s;
@@ -1434,6 +1469,14 @@ header:focus {
 
 
 /* Status Box Section */
+#statusBoxes {
+    width: var(--status-badge-container-width);
+    height: var(--status-badge-container-height);
+    flex-direction: column;
+    align-items: flex-end;
+    display: flex;
+}   
+
 .server-status-box, 
 .model-status-box {
     position: static;
@@ -1576,5 +1619,91 @@ header:focus {
         --verdict-banner-grid-template-columns: 1fr;
         --verdict-banner-grid-areas: "probability" "confidence" "reasons" "features" "history";
         --results-padding: 2rem 1rem;
+        --status-badge-container-width: 100%;
+        --status-badge-width: auto;
+
+        /* Mobile Header Variable Section (used once the logo/nav stack, below 700px) */
+        --header-height-mobile: auto;
+        --logo-left-padding-mobile: 0;
+        --logo-bottom-padding-mobile: 0.5rem;
+        --extra-right-padding-mobile: 0;
+        --extra-bottom-padding-mobile: 0.75rem;
+        --header-mobile-nav-margin-top: 0.5rem;
+
+        /* Mobile Footer Variable Section (used once the status badges stack above the copyright, below 700px) */
+        --footer-height-mobile: auto;
+        --footer-padding-mobile: 1rem 1.5rem;
+        --footer-left-padding-mobile: 0;
+    }
+
+    /* Not enough room for the logo and nav side by side, so stack them:
+       the logo on top, centered, with the nav centered underneath it */
+    header {
+        flex-direction: column;
+        align-items: center;
+
+        #extra {
+            margin-top: var(--header-mobile-nav-margin-top);
+        }
+    }
+
+    /* Not enough room for the copyright and status badges side by side, so stack them:
+       column-reverse keeps the copyright first in the markup (and tab order) while
+       still showing the status badges above it visually */
+    footer {
+        flex-direction: column-reverse;
+    }
+
+    .reports-table thead {
+        display: none;
+    }
+
+    .reports-table,
+    .reports-table tbody,
+    .reports-table tr,
+    .reports-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .reports-table {
+        border: none;
+    }
+
+    .reports-table tr {
+        margin-bottom: var(--reports-table-row-gap);
+        border: var(--info-page-table-border);
+    }
+
+        .reports-table tr:last-child {
+            margin-bottom: 0;
+        }
+
+        .reports-table td {
+            border: none;
+            border-bottom: var(--info-page-table-border);
+        }
+
+            .reports-table td:last-child {
+                border-bottom: none;
+            }
+
+            /* The column header, shown above the value since the real <th> row is hidden */
+            .reports-table td::before {
+                content: attr(data-label);
+                display: block;
+                font-weight: bold;
+                margin: var(--reports-table-label-margin);
+            }
+
+    /* Shows the two status badges side by side instead of stacked, now that the
+       container spans the full footer width above the centered copyright */
+    #statusBoxes {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--status-badge-container-row-gap);
+        display: flex;
     }
 }

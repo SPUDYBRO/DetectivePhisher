@@ -1,4 +1,5 @@
 import TrustBarChart from './components/TrustBarChart.jsx'
+import HamsterLoader from './components/HamsterLoader.jsx'
 
 // CHANGED (1): keys match the backend's two verdicts
 const VERDICT_LABELS = {
@@ -20,28 +21,7 @@ export default function ReportsPage({ history }) {
                 </div>
             )}
             {history.length === 0 && (
-            <div className="hamster-loader">
-            <p className="results-placeholder">No URLs checked yet this session.</p>
-            {/* From Uiverse.io by Nawsome */}
-            <div aria-label="Orange and tan hamster running in a metal wheel" role="img" className="wheel-and-hamster">
-            	<div className="wheel"></div>
-            	<div className="hamster">
-            		<div className="hamster__body">
-            			<div className="hamster__head">
-            				<div className="hamster__ear"></div>
-            				<div className="hamster__eye"></div>
-            				<div className="hamster__nose"></div>
-            			</div>
-            			<div className="hamster__limb hamster__limb--fr"></div>
-            			<div className="hamster__limb hamster__limb--fl"></div>
-            			<div className="hamster__limb hamster__limb--br"></div>
-            			<div className="hamster__limb hamster__limb--bl"></div>
-            			<div className="hamster__tail"></div>
-            		</div>
-            	</div>
-            	<div className="spoke"></div>
-            </div>
-            </div>
+                <HamsterLoader message="No URLs checked yet this session." />
             )}
             {history.length > 0 && (
                 <div className="info-card">
@@ -58,12 +38,12 @@ export default function ReportsPage({ history }) {
                 <tbody>
                     {history.map((entry, index) => (
                     <tr key={index}>
-                        <td>{entry.url}</td>
-                        <td>{VERDICT_LABELS[entry.verdict] ?? entry.verdict}</td>
+                        <td data-label="URL">{entry.url}</td>
+                        <td data-label="Result">{VERDICT_LABELS[entry.verdict] ?? entry.verdict}</td>
                         {/* CHANGED (3): camelCase, to match the name saved in App.jsx */}
-                        <td>{Math.round(entry.phishingProbability * 100)}%</td>
-                        <td>{Math.round(entry.confidence * 100)}%</td>
-                        <td>{entry.checkedAt}</td>
+                        <td data-label="Phishing probability">{Math.round(entry.phishingProbability * 100)}%</td>
+                        <td data-label="Confidence">{Math.round(entry.confidence * 100)}%</td>
+                        <td data-label="Checked at">{entry.checkedAt}</td>
                     </tr>
                     ))}
                 </tbody>
