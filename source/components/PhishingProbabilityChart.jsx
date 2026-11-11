@@ -14,18 +14,42 @@ export default function PhishingProbabilityChart({ phishingProbability }) {
   return (
     <>
       <div className="donut-chart">
-        {/* role and label let screen readers read the score, tabIndex lets keyboard users reach it */}
+        {/* Each slice is its own focusable/hoverable element, so it can highlight on its own like a bar chart bar */}
         <svg
           viewBox="0 0 100 100"
           className="chart-svg"
-          role="img"
-          tabIndex={0}
+          role="group"
           aria-label={`Legitimate probability ${Math.round(safeFraction * 100)} percent, phishing probability ${Math.round((1 - safeFraction) * 100)} percent`}
         >
-            <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" className="donut-arc-legitimate" strokeWidth="20" strokeDasharray={`${safeArcLength} ${DONUT_CIRCUMFERENCE}`}>
+            <defs>
+              {/* Traces an outline around just the hovered arc's own painted pixels, so the highlight follows
+                  its curve and dash cut-offs instead of drawing a box around the whole ring's bounding area */}
+              <filter id="donut-segment-outline" x="-40%" y="-40%" width="180%" height="180%">
+                <feMorphology in="SourceAlpha" operator="dilate" radius="2" result="dilated" />
+                <feFlood style={{ floodColor: 'var(--bar-chart-active-stroke-color)' }} result="outline-color" />
+                <feComposite in="outline-color" in2="dilated" operator="in" result="outline" />
+                <feMerge>
+                  <feMergeNode in="outline" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <circle
+              cx="50" cy="50" r={DONUT_RADIUS} fill="none" className="donut-arc-legitimate" strokeWidth="20"
+              strokeDasharray={`${safeArcLength} ${DONUT_CIRCUMFERENCE}`}
+              tabIndex={0}
+              role="img"
+              aria-label={`Legitimate: ${Math.round(safeFraction * 100)} percent`}
+            >
               <title>{`Legitimate: ${Math.round(safeFraction * 100)}%`}</title>
             </circle>
-            <circle cx="50" cy="50" r={DONUT_RADIUS} fill="none" className="donut-arc-phishing" strokeWidth="20" strokeDasharray={`${remainderArcLength} ${DONUT_CIRCUMFERENCE}`} strokeDashoffset={-safeArcLength}>
+            <circle
+              cx="50" cy="50" r={DONUT_RADIUS} fill="none" className="donut-arc-phishing" strokeWidth="20"
+              strokeDasharray={`${remainderArcLength} ${DONUT_CIRCUMFERENCE}`} strokeDashoffset={-safeArcLength}
+              tabIndex={0}
+              role="img"
+              aria-label={`Phishing: ${Math.round((1 - safeFraction) * 100)} percent`}
+            >
               <title>{`Phishing: ${Math.round((1 - safeFraction) * 100)}%`}</title>
             </circle>
         </svg>

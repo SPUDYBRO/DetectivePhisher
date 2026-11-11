@@ -872,6 +872,12 @@ footer {
         stroke: var(--donut-chart-phishing-color);
     }
 
+    /* Outline that traces the exact arc shape (not a bounding box), shown only on mouse hover */
+    .donut-arc-legitimate:hover,
+    .donut-arc-phishing:hover {
+        filter: url(#donut-segment-outline);
+    }
+
 /* Gauge Chart (Confidence card) */
 .confidence-disclaimer {
     color: var(--confidence-disclaimer-color);
@@ -915,6 +921,12 @@ footer {
 
     .gauge-arc-uncertain {
         stroke: var(--gauge-uncertain-color);
+    }
+
+    /* Outline that traces the exact arc shape (not a bounding box), shown only on mouse hover */
+    .gauge-arc-confident:hover,
+    .gauge-arc-uncertain:hover {
+        filter: url(#gauge-segment-outline);
     }
 
 /* Re-uses the bar chart's legend swatch, but with colours matching the gauge */
@@ -1453,6 +1465,10 @@ button:focus-visible {
 .chart-svg:focus-visible,
 .gauge-svg:focus-visible,
 .feature-average-svg:focus-visible,
+.donut-arc-legitimate:focus-visible,
+.donut-arc-phishing:focus-visible,
+.gauge-arc-confident:focus-visible,
+.gauge-arc-uncertain:focus-visible,
 .reasons-list:focus-visible,
 .history-list:focus-visible {
     outline: var(--focus-outline-width) solid var(--focus-outline-color);

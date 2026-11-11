@@ -18,19 +18,43 @@ export default function ConfidenceChart({ confidence }) {
   return (
     <>
       <div className="gauge-chart">
-        {/* role and label let screen readers read the score, tabIndex lets keyboard users reach it */}
+        {/* Each slice is its own focusable/hoverable element, so it can highlight on its own like a bar chart bar */}
         <svg
           viewBox="0 0 100 60"
           className="gauge-svg"
-          role="img"
-          tabIndex={0}
+          role="group"
           aria-label={`Confidence ${Math.round(safeConfidenceFraction * 100)} percent`}
         >
+            <defs>
+              {/* Traces an outline around just the hovered arc's own painted pixels, so the highlight follows
+                  its curve and dash cut-offs instead of drawing a box around the whole arc's bounding area */}
+              <filter id="gauge-segment-outline" x="-40%" y="-80%" width="180%" height="260%">
+                <feMorphology in="SourceAlpha" operator="dilate" radius="2" result="dilated" />
+                <feFlood style={{ floodColor: 'var(--bar-chart-active-stroke-color)' }} result="outline-color" />
+                <feComposite in="outline-color" in2="dilated" operator="in" result="outline" />
+                <feMerge>
+                  <feMergeNode in="outline" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
             <path d={GAUGE_ARC_PATH} fill="none" className="gauge-track" strokeWidth="14" strokeLinecap="round"/>
-            <path d={GAUGE_ARC_PATH} fill="none" className="gauge-arc-confident" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${confidenceArcLength} ${GAUGE_HALF_CIRCUMFERENCE}`}>
+            <path
+              d={GAUGE_ARC_PATH} fill="none" className="gauge-arc-confident" strokeWidth="14" strokeLinecap="round"
+              strokeDasharray={`${confidenceArcLength} ${GAUGE_HALF_CIRCUMFERENCE}`}
+              tabIndex={0}
+              role="img"
+              aria-label={`Confident: ${Math.round(safeConfidenceFraction * 100)} percent`}
+            >
               <title>{`Confident: ${Math.round(safeConfidenceFraction * 100)}%`}</title>
             </path>
-            <path d={GAUGE_ARC_PATH} fill="none" className="gauge-arc-uncertain" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${confidenceRemainderArcLength} ${GAUGE_HALF_CIRCUMFERENCE}`} strokeDashoffset={-confidenceArcLength}>
+            <path
+              d={GAUGE_ARC_PATH} fill="none" className="gauge-arc-uncertain" strokeWidth="14" strokeLinecap="round"
+              strokeDasharray={`${confidenceRemainderArcLength} ${GAUGE_HALF_CIRCUMFERENCE}`} strokeDashoffset={-confidenceArcLength}
+              tabIndex={0}
+              role="img"
+              aria-label={`Uncertain: ${Math.round((1 - safeConfidenceFraction) * 100)} percent`}
+            >
               <title>{`Uncertain: ${Math.round((1 - safeConfidenceFraction) * 100)}%`}</title>
             </path>
         </svg>
