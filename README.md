@@ -113,8 +113,124 @@ On top we ran a OWASP ZAP and found only 1 finding one issue, this being that we
 
 
 
-## Generative AI Statement
 
+## Detection Evasion: Attack, Defence, and Measurements (2.8)
+This documents one of the attacks identified during DetectivePhisher's security review:
+**detection evasion**, where an attacker rewrites a phishing URL so it still
+reaches the same destination but "looks different" to the model, without
+changing what a person sees when they read the link. The reason we choose this
+option was that it fit our software design the best in comparison to the rest
+
+### The attack
+DetectivePhisher's model `backend/train.py` is a
+`DecisionTreeClassifier` trained on seven purely structural features computed
+in `backend/features.py`:
+
+`num_dots, num_hyphens, host_hyphens, has_https, has_ip, domain_length, has_at_symbol`
+
+Because every one of these is a simple character count/check over the raw URL
+string, an attacker doesn't need to change the destination at all to change the
+model's input — they just need to represent the *same* destination differently.
+`backend/validation.py` already blocked spaces and
+Unicode control characters, but didn't account for:
+
+- **Homoglyphs** — look-alike Unicode punctuation/letters (e.g. the CJK
+  "ideographic full stop" `。` instead of `.`, or a Cyrillic `а` instead of a
+  Latin `a`) that read as identical to a person but aren't matched by
+  `url.count(".")`/`url.count("-")`.
+- **Punycode/IDN domains** — a homoglyph domain can be submitted either as raw
+  Unicode or as its `xn--...` punycode form. Before the fix, those two
+  representations of the *same* domain produced different `domain_length` and
+  `host_hyphens` values (the `xn--` prefix alone adds two literal hyphens).
+- **Percent-encoding** — `-` can be hidden behind `%2D`, since `urlparse`/the
+  feature counts never decode the URL.
+- **Case and dot differences** — a trailing dot or a different letter case
+  refers to the exact same host.
+
+### The fix
+`normalize_url()` in (backend/security_utils.py) canonicalises a URL, so two
+representations of the same destination always produce the same features. It
+lives alongside the other request-hardening code in `security_utils.py`, and
+is called from `validate_url()`in (backend/validation.py) — *before* the URL
+ever reaches `features.py` — so every other caller of `extract_features()`
+automatically benefits without needing to know normalization happened:
+
+1. Percent-decodes the whole URL (re-checking for spaces/control characters
+   that decoding could reveal, since the rest of `validate_url` only saw the
+   encoded form).
+2. Folds look-alike characters via Unicode NFKC plus a small curated
+   `CONFUSABLES` table (covering common Cyrillic/Greek lookalikes and
+   punctuation substitutes for `.`, `-`, `@`).
+3. Decodes any `xn--` (punycode) labels in the host back to Unicode, then
+   re-applies the folding step above, so a homoglyph hidden inside punycode is
+   also caught.
+4. Lowercases the host, strips a trailing dot, and collapses duplicate dots.
+5. Rebuilds the URL, preserving any `user:pass@` portion so the existing
+   `has_at_symbol` check still fires on legitimate "lookalike@evil.com" tricks.
+
+`validate_url(url, normalize=True)` (the new default) runs this after its
+existing checks, then re-checks the hostname/TLD against the *canonical* form
+(normalizing can reveal a different-looking host than the one checked before
+it). `normalize=False` is kept so the measurement script below can reproduce
+the pre-fix behaviour without checking out an older commit.
+
+### What we measured
+The `measure_evasion()` function in (backend/security_utils.py) measures the
+**evasion rate**: of real phishing URLs the model already recognises, what
+fraction of look-alike variants get a *different* verdict than the original?
+
+- Seeds: 200 real phishing URLs from
+  `backend/data/corrected_phishing_dataset.csv`
+  that the model already flags as phishing.
+- For each seed, one variant per technique is generated (homoglyphs,
+  percent-encoding, punycode/IDN, case+dots), then run through
+  `validate_url(variant, normalize=...)` — the same entry point `/api/predict`
+  uses — so the measurement reflects the real end-to-end behaviour, including
+  the pre-existing hostname/TLD check.
+- "Before" uses `normalize=False` (the old behaviour); "after" uses the new
+  default. A variant can also be rejected outright by `validate_url` (e.g. no
+  literal "." left for the TLD check to find); that's tracked separately from
+  an actual verdict flip.
+
+Run it yourself from `backend/`:
+
+`python security_utils.py`
+
+## Results
+| Technique          | Seeds tested | Evasion rate before | Evasion rate after |
+|--------------------|:------------:|:--------------------:|:-------------------:|
+| Homoglyphs         | 200          | 2.0%                 | 0.0%                |
+| Percent-encoding   | 200          | 0.5%                 | 0.0%                |
+| Punycode/IDN       | 199          | 4.5%                 | 0.0%                |
+| Case & dots        | 200          | 0.0%                 | 0.0%                |
+
+The model's decision tree also leans on `domain_length` and `has_ip`, which
+these tricks don't touch, so most seeds were already robust — but every
+technique still flipped some real phishing URLs before the fix, and none after.
+A handful of punycode variants are rejected outright by the pre-existing
+hostname/TLD check regardless of the fix (an unrelated side effect, not
+something `normalize_url` controls).
+
+**Regression check:** the same before/after comparison was run against 299
+real benign (legitimate) URLs from the dataset — `normalize_url` produced
+*zero* verdict changes, so the fix doesn't introduce new false positives on
+ordinary URLs.
+
+### Limitations
+- `CONFUSABLES` is a small, hand-picked subset of Unicode's full
+  [confusables list](https://util.unicode.org/UnicodeJsps/confusables.jsp),
+  covering the characters attackers use most often against this feature set,
+  not every possible look-alike character.
+- The model's coarse, structural feature set means some evasion attempts fail
+  regardless of normalization (e.g. `case_and_dots` measured 0% both before and
+  after here) simply because no feature in this model is sensitive to letter
+  case. Normalization closes the gap for every technique that *did* work.
+
+
+
+
+
+## Generative AI Statement
 Throughout this project AI was only used to help understand, give us ideas, or help us debug our website.
 
 I Evan Harrison (105929605) contributed to approx 99% of backend code. I used AI for the following (most -> least used)

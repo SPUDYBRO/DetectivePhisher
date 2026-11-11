@@ -4,12 +4,26 @@ from urllib.parse import urlparse
 import unicodedata
 import tldextract
 import ipaddress
+from security_utils import normalize_url
 
 
 # extractor = tldextract.TLDExtract(suffix_list_urls=()) #tldextract will attempt to download the latest updated tlds from the internet. This will stop it from happening and only use the one that is supplied with the package
 tldextract.extract("example.com") # this does the opposite of the code above. It will download it as soon as the server starts so the first request isn't more delayed but instead server launch.
 
-def validate_url(url: str) -> str:
+def _check_hostname(parsed_url) -> None:
+    """Raises if the parsed URL doesn't have a usable hostname (missing, or
+    missing a top level domain when it isn't a plain IP address)."""
+    if not parsed_url.hostname:
+        raise HTTPException(422, detail="The URL doesn't have a hostname")
+
+    try: # check if the url is an IP. if it is the case then it will need to skip the top level domain check because ips dont have one
+        ipaddress.ip_address(parsed_url.hostname)
+    except ValueError:
+        if not bool(tldextract.extract(parsed_url.hostname).suffix):
+            raise HTTPException(422, "The URL doesn't have a top level domain (e.g .com)")
+
+
+def validate_url(url: str, normalize: bool = True) -> str:
     stripped_url = url.strip()
     
     if not stripped_url: # Check if it was just whitespace
@@ -51,16 +65,16 @@ def validate_url(url: str) -> str:
     if not parsed_url.scheme in ["http", "https"]:
         raise HTTPException(422, "The URL is using an unsupported protocol. Only use http:// and https://")
     
-    if not parsed_url.hostname:
-        raise HTTPException(422, detail="The URL doesn't have a hostname")
-    
-    try: # check if the url is an IP. if it is the case then it will need to skip the top level domain check because ips dont have one
-        ipaddress.ip_address(parsed_url.hostname)
-    except ValueError:
-        if not bool(tldextract.extract(parsed_url.hostname).suffix):
-            raise HTTPException(422, "The URL doesn't have a top level domain (e.g .com)")
-    
-    
+    _check_hostname(parsed_url)
+
+    if normalize:
+        # Rewrites look-alike tricks (percent-encoding, Unicode homoglyphs, punycode/IDN
+        # domains, case/dot differences) into a canonical form, then re-checks the
+        # hostname/TLD against that canonical form since normalizing can reveal a
+        # different-looking host than the one checked above.
+        stripped_url = normalize_url(stripped_url)
+        parsed_url = urlparse(stripped_url)
+        _check_hostname(parsed_url)
     
     return stripped_url
     
