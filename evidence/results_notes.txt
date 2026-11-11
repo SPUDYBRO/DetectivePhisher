@@ -1,0 +1,76 @@
+Results Notes & Observations
+
+1. Baseline and Protected Average Response Times
+
+Cost Test (Off - Baseline):
+- Normal URL: Average 0.027s (Slowest: 0.097s)
+- Long URL: Average 0.013s (Slowest: 0.018s)
+
+Cost Test (On - Protected):
+- Normal URL: Average 0.028s (Slowest: 0.063s)
+- Long URL: Average 0.007s (Slowest: 0.008s)
+
+Observation:
+Enabling the protection had little impact on average response times in these tests. The normal URL average increased by approximately 0.001s, while the long URL average decreased by approximately 0.006s. The long URL result may be due to normal timing variation between runs, but these results alone cannot confirm the reason. Only five requests were tested for each case, so more tests would be needed to draw firm conclusions.
+
+2. Actual Status-Code Counts from Concurrency Tests
+
+Flood Test (Off - Baseline):
+- 30 out of 30 requests returned Status 200.
+- Total time: 0.121s.
+
+Flood Test (On - Protected):
+- 30 out of 30 requests returned Status 200.
+- Total time: 0.128s.
+
+Flood Test (Strict):
+- 15 out of 30 requests returned Status 200.
+- 15 out of 30 requests returned Status 503.
+- Total time: 0.160s.
+
+Observation:
+The baseline and standard protected tests did not trigger the concurrency limit because all requests returned Status 200. The strict test demonstrated that the server could reject requests when prediction capacity was reached. However, these results do not prove that the standard configuration will never reject requests under a heavier workload.
+
+3. Retry-After Header Appearance
+
+- The Retry-After header was absent from the responses in the Off and standard On tests.
+- In the Strict test, the 15 requests rejected with Status 503 included Retry-After: 1.
+
+Observation:
+The Retry-After header appeared on the rejected responses in the strict test, indicating that clients should wait before retrying. The header was not observed in the baseline or standard protected tests because no requests were rejected in those tests.
+
+4. Oversized Request Bodies and URLs
+
+- The oversized-body test returned Status 413 for a standard oversized JSON request and a 5 MB request body.
+- The recorded error response was:
+  {"detail":"This packet is too large"}
+- An oversized URL was rejected with Status 422 because it exceeded the 2048-character URL limit.
+
+Observation:
+The tests confirmed that the application rejected the tested oversized request bodies and URLs. Status 413 indicates that the request body was too large, while Status 422 indicates that the URL failed input validation. These results apply to the specific test cases performed and do not guarantee that every possible oversized request will be handled correctly.
+
+5. Security Headers
+
+- The security_headers.txt evidence showed the X-Content-Type-Options: nosniff header.
+- The health_check.txt evidence also showed the X-Content-Type-Options: nosniff header.
+
+Observation:
+The X-Content-Type-Options: nosniff header was confirmed in the recorded responses. The available evidence only confirms this header; it does not establish that other security headers were present. Additional headers should be tested separately if they are part of the security configuration.
+
+6. Unexpected Results and Limitations
+
+- The standard protected concurrency test returned Status 200 for all 30 requests. The concurrency limit was only triggered in the strict test.
+- The long URL test was faster on average with protection enabled. The reason for this difference cannot be determined from the available results alone.
+- The cost tests used five requests per case, and the concurrency tests used 30 requests per case. These relatively small sample sizes limit the reliability of conclusions about response times and performance.
+- The tests did not identify the precise workload required to trigger the concurrency limit under the standard configuration.
+- The semaphore limits the number of simultaneous prediction operations. It is not a general rate limiter that limits the total number of requests over a period of time.
+- These local tests do not demonstrate protection against every type of denial-of-service attack or a large-scale attack from multiple machines.
+- Security testing should also include dependency audits, security-header checks, and any additional scanning required by the assignment.
+
+7. Overall Conclusion
+
+The tests demonstrated that the application rejected the tested oversized request bodies and URLs. The strict concurrency test also demonstrated that requests could be rejected with Status 503 and a Retry-After header when prediction capacity was reached.
+
+The standard concurrency test did not trigger the concurrency limit under the tested conditions. The response-time results showed little difference between the baseline and protected configurations, although the sample size was too small to draw firm conclusions about performance.
+
+Overall, the results provide evidence that the tested protections worked under the specific conditions evaluated. Further testing with larger samples and different concurrency levels would help evaluate the protections more thoroughly.
