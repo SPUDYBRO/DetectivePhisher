@@ -8,16 +8,15 @@ export default function HelpPage() {
                 <h3>How to use DetectivePhisher</h3>
                 <ol>
                     <li>Go to the home page and paste a link into the box.</li>
-                    <li>Click the "Check URL" button to analyze the link.</li>
-                    <li>Review the trust factor results and the phishing report.</li>
+                    <li>Click the "Check Link" button to analyze the link.</li>
+                    <li>Review the verdict banner, then look through the Phishing Probability, Confidence, Report, Feature Comparison, and History cards for more detail.</li>
                 </ol>
             </div>
             <div className="info-card">
                 <h3>What the results mean</h3>
                 <ul>
                     <li>Looks Safe: nothing suspicious was found in the link.</li>
-                    <li>Use Caution: some warning signs were detected, but it may still be safe.</li>
-                    <li>Likely Phishing: many warning signs were detected. Do not open it.</li>
+                    <li>Likely Phishing: warning signs were detected. Do not open it.</li>
                 </ul>
             </div>
             <div className="info-card">

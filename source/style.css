@@ -1342,7 +1342,7 @@ footer {
             background-color: var(--bar-chart-malicious-color);
         }
 
-    /* Keeps its height when empty so the page does not jump when a bar is hovered */
+        
     .bar-chart-details {
         min-height: var(--bar-chart-details-min-height);
     }
@@ -1449,8 +1449,7 @@ button:focus-visible {
     outline-offset: var(--focus-outline-offset);
 }
 
-/* The result charts and scrollable lists are focusable for keyboard users,
-   so they need the same visible focus ring as links and buttons */
+
 .chart-svg:focus-visible,
 .gauge-svg:focus-visible,
 .feature-average-svg:focus-visible,
@@ -1460,8 +1459,6 @@ button:focus-visible {
     outline-offset: var(--focus-outline-offset);
 }
 
-/* The header only receives focus programmatically (page changes),
-   so it never needs its own focus ring */
 header:focus {
     outline: none;
 }
@@ -1473,9 +1470,6 @@ header:focus {
     width: var(--status-badge-container-width);
     height: var(--status-badge-container-height);
     flex-direction: column;
-    /* Container shrinks to fit its widest child (fit-content above), and since
-       the badges themselves don't set their own width, stretch makes both of
-       them match that same width instead of each hugging its own text. */
     align-items: stretch;
     display: flex;
 }   
