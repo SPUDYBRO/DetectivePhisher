@@ -79,7 +79,7 @@ to create the conda environment with our dependencies, run the code in powershel
 ## Threat model (2.6)
 Firstly, people who host or own phishing or non-legitimate websites might be get frustrated as we help the general public with identifying these issues.
 On-top, a lot of hacks are spontaneous and a lot of the time unprovoked, so people who are just generally interested in getting our website down or just wreaking as much havoc as possible
-So for the first part I have identified two types of people that may want to do malicious activities with our site
+So for the first part we have identified two types of people that may want to do malicious activities with our site
     - A phishing link owner/ hoster or someone directly correlated in scamming / phishing or any other similar practices
     - A cybervandalist who is just there to destroy
 
@@ -88,7 +88,7 @@ These people will want to achieve a somewhat similar goal. A phishing link owner
 
 These kinds of people can thankfully only do so much damage to a simple site like ours. Since we have no login system and history is stored per session, they have no way of gaining "unauthorised access" to our website if the entirety is public. On-top we store absolutely no data, so they wont be able to use SQL injection or any other data manipulation techniques, they also cant make malicious code run on our website's frontend that runs on other user's computers (stored XSS). Although just because we are a simple website doesn't make us immune to threats. Things that they could attempt on us are
     - Model swapping. The hackers may want to replace their own model with our model without us knowing
-    - Run code on our backend. The hackers may want to take over completely by opening back doors through code that they made the server run
+    - Run code on our backend. The hackers may want to take over completely by opening back doors through code that they made
     - Flood our API with requests till it stops responding (too many requests to handle)
     - Flood our model with requests (extremely expensive requests to process)
     - Pasted text could be attacker controlled (they have intentionally added html in the link to escape and run on the users computer)
@@ -108,7 +108,7 @@ For flooding though, our model is extremely light and can handle lots of request
 ### Misconfiguration and vulnerable dependencies
 Upon running npm audit we received two vulnerabilities notices. 1 moderate, and one high.
 this is because we were using outdated Vite (6.4.3) which inturn caused other packages to be outdated. We fixed this by updating Vite to 8 and then doing a fresh install of npm (to remove old dependencies) which fixed both issues
-Ontop we ran a OWASP ZAP and found only 1 finding one issue, this being that we had no `X-Content-Type-Options` header set. This header not being present means our server doesn't send the nosniff directive and opens us upto MIME confusion and possible XSS vulnerabilities
+On top we ran a OWASP ZAP and found only 1 finding one issue, this being that we had no `X-Content-Type-Options` header set. This header not being present means our server doesn't send the nosniff directive and opens us up to MIME confusion and possible XSS vulnerabilities
 
 
 
@@ -121,3 +121,9 @@ I Evan Harrison (105929605) contributed to approx 99% of backend code. I used AI
     -  `prediction.py` I already knew how to make the model predict prior, although after asking AI "If there was a way to get the models actual thought process" (as stated in the file, I talk about what I was going to do previously) I decided to get help on developing this complicated process. The AI assisted me in designing (by giving me a structured process on what is required to happen) and hints (For example how something is returned). I understand everything I wrote and even described the process above the file to demonstrate this knowledge.
     -  `validation.py` AI was only used for giving me ideas on what I should block, and any bugs that may occur.
     -  Overall. AI was used for debugging, or checking if what we have meets requirements
+
+1 Henry Bennett (105923571) contributed to approx 98% of front end code. I used AI for the following (most -> least used)
+    - `App.jsx` I have a great understanding of HTML but i did need AI to help me understand how to load the SVG icons as jsx.
+    - `ai-model-status-icon.svg` I am new to making icons as .svg so i used AI to learn how to make them.
+    - `server-status-icon.svg` I am new to making icons as .svg so i used AI to learn how to make them.
+    - `style.css` Also hae a great understanding on CSS but learnt how to set min, preferred max size settings for something using `clamp` like `--donut-chart-label-font-size: clamp(0.75rem, 15cqw, 1.5rem);` in line 239 where cqw stands for Container Query Width meaning in this case the preferred size of the font in this case should be 15% of the containers width but no small or big that 0.75rem/1.5rem.
